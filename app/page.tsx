@@ -19,6 +19,30 @@ interface NewsItemProps {
   content: string;
 }
 
+// StatCard 컴포넌트
+function StatCard({ title, value, sub, color }: StatCardProps) {
+  return (
+    <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+      <h3 className="text-slate-400 text-sm font-medium">{title}</h3>
+      <p className={`text-2xl font-bold mt-1 ${color}`}>{value}</p>
+      <p className="text-xs text-slate-500 mt-2">{sub}</p>
+    </div>
+  );
+}
+
+// NewsItem 컴포넌트
+function NewsItem({ tag, source, content }: NewsItemProps) {
+  return (
+    <div className="border-b border-slate-800 pb-4 last:border-0 last:pb-0">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="bg-blue-900 text-blue-300 text-[10px] px-2 py-0.5 rounded font-bold">{tag}</span>
+        <span className="text-slate-500 text-xs">{source}</span>
+      </div>
+      <p className="text-sm">{content}</p>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans">
@@ -32,7 +56,7 @@ export default function Home() {
           <p className="text-slate-500 text-sm font-medium">실시간 전쟁 및 국제 분쟁 상황판 | <span className="text-blue-500">world-war.kr</span></p>
         </div>
         <div className="text-right italic text-xs text-slate-600 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
-          마지막 업데이트: 2026. 03. 21 17:18 KST
+          마지막 업데이트: 실시간
         </div>
       </div>
 
@@ -60,7 +84,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 오른쪽: 진짜 지도 영역 (교체됨!) */}
+        {/* 오른쪽: 진짜 지도 영역 */}
         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl min-h-[500px] relative">
           <Map
             initialViewState={{
@@ -77,6 +101,13 @@ export default function Home() {
               <div className="w-5 h-5 bg-red-600 rounded-full border-2 border-white animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.8)]"></div>
             </Marker>
 
-            {/* 중동 지역 마커 (예시) */}
+            {/* 중동 지역 마커 (여기서 잘렸었죠!) */}
             <Marker longitude={35.0818} latitude={31.9522} anchor="bottom">
-              <div className="w-4 h-4 bg-orange-500 rounded-full border-2 border-white animate-pulse shadow-[0_0_10px_rgba(2
+              <div className="w-4 h-4 bg-orange-500 rounded-full border-2 border-white animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]"></div>
+            </Marker>
+          </Map>
+        </div>
+      </div>
+    </main>
+  );
+}
