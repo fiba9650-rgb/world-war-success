@@ -1,201 +1,215 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import Map, { Marker, NavigationControl, Popup, MapRef } from 'react-map-gl';
+import { useState, useRef, useEffect } from 'react';
+import Map, { Marker, NavigationControl, Source, Layer, MapRef } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
-const GNEWS_API_KEY = 'ba2846376d87ba71fd85e5d1c422c3c8';
-const ALPHA_VANTAGE_KEY = 'XDGLHB3T4MRBSMA7';
 
-const getDiffDays = (date: string) => {
-  const start = new Date(date);
-  const now = new Date();
-  const diff = now.getTime() - start.getTime();
-  return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+// 🗺️ 몽골 제국 스타일 (중세 느낌)
+const MONGOL_MAP_STYLE = 'mapbox://styles/mapbox/outdoors-v12';
+
+// 📚 위키피디아 고증 기반 칭기즈칸 일대기 및 추정 영토 데이터
+const MONGOL_CHRONICLE: any = {
+  name: "칭기즈칸: 유라시아를 정복한 푸른 늑대",
+  center: { lon: 90.0, lat: 48.0, zoom: 3 },
+  events: [
+    {
+      year: "1162경",
+      title: "테무친 탄생 (Temüjin Born)",
+      location: "델리운 볼닥 (Delüün Boldog)",
+      lat: 49.3, lon: 111.4,
+      desc: "훗날 칭기즈칸이 되는 테무친이 몽골 보르지긴 부족에서 태어나다. 위키피디아에 따르면, 그의 탄생은 몽골 부족 연맹체의 등장과 밀접한 관련이 있다.",
+      impact: "세계 역사상 가장 거대한 제국의 시발점"
+    },
+    {
+      year: "1206",
+      title: "칭기즈칸 즉위 (Proclaimed Genghis Khan)",
+      location: "오논강 (Onon R.)",
+      lat: 48.0, lon: 110.0,
+      desc: "쿠릴타이에서 테무친이 몽골 부족을 완전히 통합하고 '칭기즈칸(바다의 칸)'으로 추대되다. 이로써 통일된 몽골 제국이 선포되었다.",
+      impact: "몽골 부족 연맹의 단일 국가화 및 정복 전쟁의 서막"
+    },
+    {
+      year: "1209",
+      title: "서하 정복 개시 (Western Xia Campaign)",
+      location: "흥경 (Yinchuan)",
+      lat: 38.47, lon: 106.27,
+      desc: "몽골군이 서하를 공격하여 수도 흥경을 위협하고 속국으로 삼다. 서하의 정복은 몽골이 중국 본토와 서역으로 진출하기 위한 교두보가 되었다.",
+      impact: "남송 및 금나라 공격을 위한 전략적 기반 마련"
+    },
+    {
+      year: "1215",
+      title: "중도 함락 (Fall of Zhongdu)",
+      location: "중도 (Zhongdu, Beijing)",
+      lat: 39.9, lon: 116.4,
+      desc: "금나라의 수도 중도를 함락시키다. 금나라는 황하 이남으로 천도하게 되었으며, 위키피디아는 이 사건을 몽골의 동아시아 패권 장악의 핵심 사건으로 다룬다.",
+      impact: "금나라의 화북 지배력 상실 및 몽골의 동아시아 진출 가속화"
+    },
+    {
+      year: "1220",
+      title: "호라즘 제국 파괴 (Khwarazmian Conquest)",
+      location: "사마르칸트 (Samarkand)",
+      lat: 39.65, lon: 66.97,
+      desc: "통상 사절단 학살 사건(오트라르 사건)을 계기로 칭기즈칸이 직접 서역 원정을 단행, 호라즘 제국의 주요 도시(부하라, 사마르칸트 등)를 철저히 파괴하고 서아시아로 진출하다.",
+      impact: "중앙아시아 장악 및 실크로드 통제권 획득"
+    },
+    {
+      year: "1227",
+      title: "칭기즈칸 서거 (Death of Genghis Khan)",
+      location: "서하 국경부",
+      lat: 38.0, lon: 106.0,
+      desc: "서하 2차 원정 중 서거하다. 위키피디아에 따르면, 그의 유언에 따라 서하의 마지막 황제는 칭기즈칸 사후에 처형되었으며, 서하는 완전히 멸망하여 몽골 영토로 병합되었다.",
+      impact: "초대 칸의 퇴장과 오고타이 칸으로의 권력 이양"
+    }
+  ]
 };
 
-const getCurrentTimeStamp = () => {
-  const now = new Date();
-  return `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 ${now.getHours()}시 기준`;
+// 🗺️ 각 연도별 몽골 영토 (Polygon) 데이터 (임시 좌표)
+const MONGOL_TERRITORY_LAYERS: any = {
+  // 1206년 초기 영토 (몽골 고원 중심)
+  "1206": {
+    type: "Feature",
+    geometry: {
+      type: "Polygon",
+      coordinates: [[
+        [100, 45], [115, 45], [115, 53], [100, 53], [100, 45]
+      ]]
+    }
+  },
+  // 1215년 확장 (금나라 화북 포함)
+  "1215": {
+    type: "Feature",
+    geometry: {
+      type: "Polygon",
+      coordinates: [[
+        [90, 35], [120, 35], [120, 55], [90, 55], [90, 35]
+      ]]
+    }
+  },
+  // 1227년 사망 시 영토 (서하, 호라즘 병합)
+  "1227": {
+    type: "Feature",
+    geometry: {
+      type: "Polygon",
+      coordinates: [[
+        [60, 30], [120, 30], [120, 55], [60, 55], [60, 30]
+      ]]
+    }
+  }
 };
 
 export default function Home() {
   const mapRef = useRef<MapRef>(null);
-  const [stats, setStats] = useState<any>(null);
+  const [mapLoading, setMapLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [timeStamp, setTimeStamp] = useState('');
-  const [popupInfo, setPopupInfo] = useState<any>(null);
 
-  const fetchLiveStats = async (query: string, fallback: string) => {
-    try {
-      const res = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=3&apikey=${GNEWS_API_KEY}`);
-      const data = await res.json();
-      if (data.articles && data.articles.length > 0) {
-        const match = data.articles[0].title.match(/[\d,]+/);
-        return match ? match[0] : fallback;
-      }
-      return fallback;
-    } catch { return fallback; }
-  };
-
-  const fetchBcomclPrice = async () => {
-    try {
-      const res = await fetch(`https://www.alphavantage.co/query?function=WTI&apikey=${ALPHA_VANTAGE_KEY}`);
-      const data = await res.json();
-      if (data.data && data.data.length > 1) {
-        const rawCurrent = parseFloat(data.data[0].value);
-        const rawPrev = parseFloat(data.data[1].value);
-        const bcomclIndex = rawCurrent * 2.0867;
-        const absoluteChange = (rawCurrent - rawPrev) * 2.0867;
-        const percentChange = ((rawCurrent - rawPrev) / rawPrev * 100).toFixed(2);
-        return { price: bcomclIndex.toFixed(4), abs: absoluteChange.toFixed(4), percent: percentChange };
-      }
-      return { price: "134.6332", abs: "3.6731", percent: "2.80" };
-    } catch { return { price: "134.6332", abs: "3.6731", percent: "2.80" }; }
-  };
-
-  // 🖱️ 작전 일지 클릭 시 지도만 이동 (FlyTo)
-  const handleTimelineClick = (item: any) => {
-    setPopupInfo(item);
+  // 🖱️ 일지 클릭 시 지도 이동 및 해당 영토 표시
+  const handleEventClick = (event: any) => {
+    setSelectedEvent(event);
     if (mapRef.current) {
       mapRef.current.flyTo({
-        center: [item.lon, item.lat],
-        zoom: 7.5,
-        essential: true,
-        duration: 2500 // 2.5초 동안 부드럽게 이동
+        center: [event.lon, event.lat],
+        zoom: 4.5,
+        duration: 2500
       });
     }
   };
 
-  const loadData = async (type: 'MIDDLE_EAST' | 'RUSSIA_UKRAINE') => {
-    setTimeStamp(getCurrentTimeStamp());
-    setPopupInfo(null);
-    const oil = await fetchBcomclPrice();
-    const deathKey = type === 'MIDDLE_EAST' ? 'Israel Iran "death toll"' : 'Ukraine Russia "casualties"';
-    const liveDeaths = await fetchLiveStats(deathKey, type === 'MIDDLE_EAST' ? "3,200" : "520,000");
-
-    setStats({
-      type,
-      name: type === 'MIDDLE_EAST' ? "중동 전면전 상황실" : "러우 전쟁 상황실",
-      days: type === 'MIDDLE_EAST' ? getDiffDays("2026-02-28") : getDiffDays("2022-02-24"),
-      deaths: `${liveDeaths}+`,
-      damage: type === 'MIDDLE_EAST' ? "$120B" : "$486B",
-      oil: type === 'MIDDLE_EAST' ? oil : null,
-      timeline: type === 'MIDDLE_EAST' ? [
-        { date: "02.28 11:40", event: "테헤란 內 하메나이 암살 (정밀 드론 타격)", risk: "🔴 위기", lat: 35.6892, lon: 51.3890 },
-        { date: "02.28 14:15", event: "이란 국가안보최고회의 긴급 소집 및 보복 선포", risk: "🔴 위기", lat: 35.6892, lon: 51.3890 },
-        { date: "03.02 03:00", event: "호르무즈 해협 이란 해군 전면 봉쇄 단행", risk: "🔴 위기", lat: 26.59, lon: 56.45 },
-        { date: "03.05 09:00", event: "이스라엘 국방부(IDF) 예비군 추가 소집 및 비상경계", risk: "🟠 경계", lat: 31.7683, lon: 35.2137 },
-        { date: "03.15 22:30", event: "미 해군 제5함대 항공모함 타격단 전진 배치", risk: "🟠 경계", lat: 26.2, lon: 50.6 },
-        { date: "03.22 현재", event: "이란 탄도 미사일 기지 가동 포착 / 위기 최고조", risk: "🔴 위기", lat: 32.65, lon: 51.66 }
-      ] : [
-        { date: "22.02.24", event: "러시아 군, 우크라이나 전면 침공 개시", risk: "🔴 위기", lat: 50.45, lon: 30.52 },
-        { date: "26.03 현재", event: "동부 전선 소모전 지속 및 드론 공격 격화", risk: "🟠 경계", lat: 48.37, lon: 38.01 }
-      ]
-    });
-  };
-
-  useEffect(() => { setTimeStamp(getCurrentTimeStamp()); }, []);
+  useEffect(() => {
+    // 💡 위키피디아 데이터를 기반으로 실시간 타임스탬프 설정 (임시)
+    const now = new Date();
+    setTimeStamp(`${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()} 위키피디아 고증 기준`);
+  }, []);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans selection:bg-red-500/30">
-      <div className="max-w-7xl mx-auto flex justify-between items-end mb-10 border-b border-slate-800 pb-8">
+    <main className="min-h-screen bg-stone-950 text-stone-200 font-serif selection:bg-amber-900/50 p-6 md:p-12 overflow-x-hidden">
+      {/* 📡 글로벌 헤더 */}
+      <div className="max-w-7xl mx-auto flex justify-between items-end mb-12 border-b-2 border-amber-700/50 pb-10 shadow-2xl">
         <div>
-          <h1 className="text-4xl font-black text-red-600 italic tracking-tighter uppercase leading-none">WARBOARD</h1>
-          <p className="text-slate-500 text-[9px] mt-3 font-mono uppercase tracking-[0.5em]">Strategic Intelligence / world-war.kr</p>
+          <h1 className="text-5xl font-black text-amber-600 italic tracking-tighter uppercase leading-none">The Mongol Chronicle</h1>
+          <p className="text-stone-500 text-[10px] mt-4 font-mono uppercase tracking-[0.5em]">{timeStamp}</p>
         </div>
-        {stats && <button onClick={() => setStats(null)} className="text-[10px] font-bold border border-slate-700 px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all">EXIT MONITOR</button>}
+        <div className="text-right">
+          <p className="text-stone-600 text-[9px] font-black uppercase tracking-widest mb-1">Source: Wikipedia canon</p>
+          <span className="text-[10px] font-black text-amber-500 border border-amber-800 px-4 py-1.5 rounded-full uppercase tracking-wider shadow-inner">world-war.kr</span>
+        </div>
       </div>
 
-      {!stats ? (
-        <div className="max-w-7xl mx-auto h-[400px] bg-slate-900/10 border-2 border-dashed border-slate-800 rounded-[50px] flex flex-col items-center justify-center space-y-10">
-          <div className="flex flex-wrap justify-center gap-6">
-            <button onClick={() => loadData('MIDDLE_EAST')} className="px-12 py-6 bg-red-600 rounded-3xl font-black text-lg hover:scale-105 transition-all shadow-2xl">중동 전쟁 분석</button>
-            <button onClick={() => loadData('RUSSIA_UKRAINE')} className="px-12 py-6 bg-blue-700 rounded-3xl font-black text-lg hover:scale-105 transition-all shadow-2xl">러우 전쟁 분석</button>
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* 📜 작전 일지 (The Chronicle Panel) */}
+        <div className="lg:col-span-1 bg-stone-900/50 border-2 border-stone-800 rounded-[50px] p-10 h-[700px] flex flex-col overflow-hidden shadow-inner">
+          <div className="mb-10">
+            <h2 className="text-3xl font-black text-stone-100 italic tracking-tighter leading-none">{MONGOL_CHRONICLE.name}</h2>
           </div>
-        </div>
-      ) : (
-        <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-700">
           
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${stats.type === 'MIDDLE_EAST' ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4`}>
-            <StatCard title="교전 기간" value={`${stats.days}일차`} sub="실시간 추적 중" color="text-white" />
-            <StatCard title="추정 사망자" value={stats.deaths} sub={timeStamp} color="text-red-500" extra="LIVE" />
-            <StatCard title="경제적 피해" value={stats.damage} sub={timeStamp} color="text-blue-400" />
-            {stats.oil && (
-              <StatCard title="WTI Index" value={stats.oil.price} color="text-yellow-500" oilInfo={stats.oil} sub="Bloomberg BCOMCL" />
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* 📜 깔끔한 작전 일지 리스트 */}
-            <div className="lg:col-span-1 bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 h-[550px] flex flex-col overflow-hidden">
-              <h3 className="text-slate-500 text-[10px] font-bold uppercase mb-8 tracking-widest border-l-4 border-red-600 pl-3 italic font-black">Tactical Log</h3>
-              <div className="space-y-4 overflow-y-auto flex-1 pr-2 scrollbar-hide">
-                {stats.timeline.map((item: any, idx: number) => (
-                  <div key={idx} className="relative pl-6 border-l border-slate-800 pb-5 last:border-0 cursor-pointer group" onClick={() => handleTimelineClick(item)}>
-                    <div className="absolute -left-[5px] top-1 w-2 h-2 bg-slate-700 rounded-full group-hover:bg-red-600 transition-colors"></div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-[10px] font-mono text-red-500 font-black">{item.date}</span>
-                      <span className="text-[8px] font-black text-slate-100 bg-red-950 px-2 py-0.5 rounded uppercase tracking-tighter">{item.risk}</span>
-                    </div>
-                    <p className="text-sm text-slate-300 font-bold leading-relaxed group-hover:text-white transition-colors tracking-tight">{item.event}</p>
-                    <p className="text-[9px] text-slate-600 mt-1 font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity">지도에서 위치 보기 →</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 🗺️ 지도 모니터 */}
-            <div className="lg:col-span-2 h-[550px] bg-slate-900 rounded-[40px] overflow-hidden border border-slate-800 shadow-2xl relative">
-              <Map
-                ref={mapRef}
-                initialViewState={{ longitude: 50, latitude: 25, zoom: 4 }}
-                style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/dark-v11"
-                mapboxAccessToken={MAPBOX_TOKEN}
+          <div className="space-y-6 overflow-y-auto flex-1 pr-4 scrollbar-hide">
+            {MONGOL_CHRONICLE.events.map((event: any, idx: number) => (
+              <div 
+                key={idx} 
+                className={`p-7 rounded-[35px] border-2 transition-all cursor-pointer ${selectedEvent?.title === event.title ? 'bg-amber-900/20 border-amber-600/60' : 'bg-stone-900 border-transparent hover:border-stone-700'}`}
+                onClick={() => handleEventClick(event)}
               >
-                <NavigationControl position="top-right" />
-                
-                {popupInfo && (
-                  <Popup longitude={popupInfo.lon} latitude={popupInfo.lat} anchor="top" onClose={() => setPopupInfo(null)} className="z-50" closeButton={false}>
-                    <div className="p-3 text-black max-w-[220px]">
-                      <p className="text-[10px] font-black text-red-600 mb-1">{popupInfo.date} • {popupInfo.risk}</p>
-                      <p className="text-xs font-black leading-snug">{popupInfo.event}</p>
-                    </div>
-                  </Popup>
-                )}
-                
-                <Marker longitude={56.3} latitude={26.6}>
-                  <div className="relative cursor-pointer">
-                    <div className="w-12 h-12 rounded-full animate-ping absolute -top-4 -left-4 opacity-20 bg-red-600"></div>
-                    <div className="w-4 h-4 rounded-full border-2 border-white bg-red-600 shadow-2xl"></div>
-                  </div>
-                </Marker>
-              </Map>
-            </div>
+                <span className="text-[11px] font-mono text-amber-500 font-bold tracking-widest">{event.year} ERA</span>
+                <h4 className="text-xl font-black text-stone-100 mt-2">{event.title}</h4>
+                <p className="text-[11px] text-stone-500 font-bold mb-5 uppercase tracking-tighter italic">{event.location}</p>
+                <p className="text-xs text-stone-300 leading-relaxed font-sans normal-case">{event.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
-      )}
-    </main>
-  );
-}
 
-function StatCard({ title, value, color, sub, oilInfo }: any) {
-  const isOil = !!oilInfo;
-  const isPositive = oilInfo ? parseFloat(oilInfo.abs) >= 0 : true;
+        {/* 🗺️ 디지털 영토 지도 (The Dynamic Map Monitor) */}
+        <div className="lg:col-span-2 h-[700px] bg-stone-900 rounded-[60px] overflow-hidden border-2 border-amber-800 shadow-[0_0_50px_rgba(180,83,9,0.2)] relative">
+          <Map
+            ref={mapRef}
+            initialViewState={MONGOL_CHRONICLE.center}
+            style={{ width: '100%', height: '100%' }}
+            mapStyle={MONGOL_MAP_STYLE}
+            mapboxAccessToken={MAPBOX_TOKEN}
+            onLoad={() => setMapLoading(false)}
+          >
+            <NavigationControl position="top-right" />
+            
+            {/* 💡 각 연도별 영토 Polygon Layer (Mapbox Source/Layer) */}
+            {selectedEvent && selectedEvent.year && MONGOL_TERRITORY_TERRITORY_LAYERS[selectedEvent.year] && (
+              <Source id={`mongol-territory-${selectedEvent.year}`} type="geojson" data={MONGOL_TERRITORY_LAYERS[selectedEvent.year]}>
+                <Layer
+                  id={`mongol-fill-${selectedEvent.year}`}
+                  type="fill"
+                  paint={{
+                    'fill-color': '#b45309', // 앰버 색상 (몽골 영토)
+                    'fill-opacity': 0.3      // 반투명하게 설정
+                  }}
+                  beforeId="waterway-label" // 라벨 아래에 배치
+                />
+                <Layer
+                  id={`mongol-line-${selectedEvent.year}`}
+                  type="line"
+                  paint={{
+                    'fill-color': '#b45309', // 앰버 색상 (몽골 영토)
+                    'fill-opacity': 0.3      // 반투명하게 설정
+                  }}
+                  beforeId="waterway-label" // 라벨 아래에 배치
+                />
+              </Source>
+            )}
 
-  return (
-    <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-[30px] shadow-xl hover:bg-slate-900 transition-all">
-      <h4 className="text-slate-600 text-[8px] font-bold uppercase mb-3 tracking-[0.2em] font-mono">{title}</h4>
-      <div className="flex flex-col gap-1">
-        <p className={`text-4xl font-black leading-none ${color} tracking-tighter`}>{value}</p>
-        {isOil && (
-          <span className={`text-[10px] font-black ${isPositive ? 'text-red-500' : 'text-blue-500'} flex items-center gap-1 mt-2`}>
-            {isPositive ? '▲' : '▼'} +{oilInfo.abs} (+{oilInfo.percent}%)
-          </span>
-        )}
+            {/* 정복 마커 표시 */}
+            {MONGOL_CHRONICLE.events.map((event: any, idx: number) => (
+              <Marker key={idx} longitude={event.lon} latitude={event.lat}>
+                <div className="group cursor-pointer" onClick={() => handleEventClick(event)}>
+                  <div className={`w-5 h-5 rounded-full border-2 border-white shadow-2xl transition-all ${selectedEvent?.title === event.title ? 'bg-amber-500 scale-150 animate-pulse' : 'bg-stone-700 opacity-60'}`}></div>
+                  <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-stone-950/95 text-amber-500 text-[10px] font-black px-3 py-1.5 rounded-md border border-amber-900/50 opacity-0 group-hover:opacity-100 transition-opacity shadow-2xl whitespace-nowrap">
+                    {event.location}
+                  </div>
+                </div>
+              </Marker>
+            ))}
+          </Map>
+        </div>
       </div>
-      <p className="text-slate-500 text-[9px] font-bold mt-4 border-t border-slate-800/50 pt-3 tracking-tighter uppercase italic">{sub}</p>
-    </div>
+    </main>
   );
 }
