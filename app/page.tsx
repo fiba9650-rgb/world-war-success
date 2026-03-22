@@ -4,7 +4,9 @@ import { useState } from 'react';
 import Map, { Marker, NavigationControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
+// 💡 여기에 본인의 Mapbox Token을 직접 넣으면 가장 확실하게 작동합니다.
+// 만약 토큰이 없다면 mapbox.com에서 무료로 만드실 수 있어요!
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY203M3p2YzhsMGZrazJpcHJ6bmZndXFhZCJ9.7X8_mZ_rD_Y_Z_Z_Z_Z_Z_Z'; // 여기에 본인의 토큰을 넣으세요.
 
 interface StatCardProps {
   title: string;
@@ -19,7 +21,6 @@ interface NewsItemProps {
   content: string;
 }
 
-// StatCard 컴포넌트
 function StatCard({ title, value, sub, color }: StatCardProps) {
   return (
     <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
@@ -30,7 +31,6 @@ function StatCard({ title, value, sub, color }: StatCardProps) {
   );
 }
 
-// NewsItem 컴포넌트
 function NewsItem({ tag, source, content }: NewsItemProps) {
   return (
     <div className="border-b border-slate-800 pb-4 last:border-0 last:pb-0">
@@ -46,7 +46,6 @@ function NewsItem({ tag, source, content }: NewsItemProps) {
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans">
-      {/* 상단 헤더 영역 */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-slate-800 pb-6 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -60,7 +59,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 실시간 주요 지표 카드 */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         <StatCard title="전쟁 경과" value="22일째" sub="Epic Fury 작전 개시일 기준" color="text-white" />
         <StatCard title="총 추정 사망자" value="12,500+" sub="국제기구 합산 추정치" color="text-red-500" />
@@ -68,14 +66,9 @@ export default function Home() {
         <StatCard title="유가 영향 (Brent)" value="$108.00" sub="전월 대비 +20% 급등" color="text-yellow-500" />
       </div>
 
-      {/* 하단 콘텐츠: 뉴스 및 지도 영역 */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* 왼쪽: 실시간 뉴스 피드 */}
         <div className="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-          <h2 className="text-lg font-bold mb-6 flex items-center border-l-4 border-blue-500 pl-3">
-            실시간 주요 뉴스
-          </h2>
+          <h2 className="text-lg font-bold mb-6 flex items-center border-l-4 border-blue-500 pl-3">실시간 주요 뉴스</h2>
           <div className="space-y-6">
             <NewsItem tag="군사" source="Reuters" content="미 국방부, 이란 내 주요 미사일 기지 정밀 타격 발표" />
             <NewsItem tag="외교" source="AP News" content="UN 안보리, 중동 지역 인도적 휴전안 표결 예정" />
@@ -84,26 +77,28 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 오른쪽: 진짜 지도 영역 */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl min-h-[500px] relative">
+        {/* 🗺️ 지도 영역 수정: 높이를 고정(h-[600px])하여 확실히 보이게 함 */}
+        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl h-[600px] relative">
           <Map
             initialViewState={{
-              longitude: 31.1656, 
-              latitude: 48.3794,  
-              zoom: 3.5
+              longitude: 35.0, 
+              latitude: 31.0,  
+              zoom: 3
             }}
             style={{ width: '100%', height: '100%' }}
             mapStyle="mapbox://styles/mapbox/dark-v11" 
             mapboxAccessToken={MAPBOX_TOKEN}
           >
-            {/* 우크라이나 마커 */}
-            <Marker longitude={30.5238} latitude={50.4501} anchor="bottom">
-              <div className="w-5 h-5 bg-red-600 rounded-full border-2 border-white animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.8)]"></div>
+            <NavigationControl position="top-right" />
+            
+            {/* 예시 마커: 우크라이나 지역 */}
+            <Marker longitude={30.52} latitude={50.45} anchor="bottom">
+              <div className="w-5 h-5 bg-red-600 rounded-full border-2 border-white animate-pulse"></div>
             </Marker>
 
-            {/* 중동 지역 마커 (여기서 잘렸었죠!) */}
-            <Marker longitude={35.0818} latitude={31.9522} anchor="bottom">
-              <div className="w-4 h-4 bg-orange-500 rounded-full border-2 border-white animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]"></div>
+            {/* 예시 마커: 중동 지역 */}
+            <Marker longitude={35.21} latitude={31.76} anchor="bottom">
+              <div className="w-5 h-5 bg-orange-500 rounded-full border-2 border-white animate-pulse"></div>
             </Marker>
           </Map>
         </div>
