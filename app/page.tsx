@@ -6,140 +6,119 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
 
-// 📚 위키피디아 고증 기반 1차 세계 대전 (WW1) 정밀 데이터
+// 📚 나무위키 및 위키피디아 통합 고증 데이터
 const WW1_CHRONICLE: any = {
-  name: "제1차 세계 대전 (The Great War)",
-  summary: "1914년부터 1918년까지 전 세계적으로 벌어진 사상 초유의 총력전. 유럽을 중심으로 한 동맹국과 연합국의 대결.",
-  center: { lon: 15.0, lat: 48.0, zoom: 4 }, // 유럽 중심 뷰포트
+  name: "제1차 세계 대전 (World War I)",
+  summary: "1914년부터 1918년까지 전 세계를 휩쓴 최초의 총력전. 제국주의 열강들의 충돌로 인해 4대 제국이 멸망하고 현대 세계 질서의 기틀이 마련된 거대한 비극입니다.",
+  center: { lon: 15.0, lat: 48.0, zoom: 4 },
   events: [
     {
       date: "1914.06.28",
       title: "사라예보 암살 사건",
       location: "사라예보 (Sarajevo)",
       lat: 43.8563, lon: 18.4131,
-      desc: "오스트리아-헝가리 제국 황태자 부부가 세르비아 민족주의자에게 암살당함. 대전 발발의 직접적인 도화선.",
-      impact: "🔴 발발 (암살)"
-    },
-    {
-      date: "1914.08.04",
-      title: "슐리펜 플랜 발동 및 벨기에 침공",
-      location: "리에주 (Liège)",
-      lat: 50.64, lon: 5.57,
-      desc: "독일군이 벨기에를 침공하며 프랑스로 진격. 영국이 독일에 선전포고하며 대전이 전 유럽으로 확대됨.",
-      impact: "🔴 침공"
+      desc: "세르비아 민족주의자가 오스트리아-헝가리 제국 황태자를 암살. '유럽의 화약고' 발칸 반도에서 시작된 이 불꽃이 전 세계적인 대전으로 번지는 도화선이 되었습니다.",
+      impact: "🔴 전쟁의 서막"
     },
     {
       date: "1914.09.06",
-      title: "제1차 마른 전투 (Battle of the Marne)",
+      title: "마른 전투와 참호전의 시작",
       location: "마른강 (Marne R.)",
       lat: 48.9, lon: 3.1,
-      desc: "프랑스·영국 연합군이 독일군의 파리 진격을 저지. 이후 서부 전선은 장기간의 교착된 참호전으로 변모.",
-      impact: "🟠 교전 (저지)"
+      desc: "독일의 슐리펜 플랜이 저지당하며 전쟁은 장기전으로 돌입합니다. 스위스부터 북해까지 이어진 거대한 참호선이 형성되었고, 인류는 수년간의 지루하고 처참한 소모전을 마주하게 됩니다.",
+      impact: "🟠 교착 상태"
     },
     {
-      date: "1916.07.01",
-      title: "솜 전투 개시 (Battle of the Somme)",
-      location: "솜강 (Somme R.)",
-      lat: 49.9, lon: 2.7,
-      desc: "연합군의 대규모 공세. 첫날에만 영국군 6만 명 사상. 탱크가 처음 등장한 전투로, 대전 중 가장 처참한 소모전.",
-      impact: "🟠 교전 (소모전)"
+      date: "1916.02.21",
+      title: "베르됭 전투 (최악의 소모전)",
+      location: "베르됭 (Verdun)",
+      lat: 49.16, lon: 5.38,
+      desc: "프랑스와 독일군이 맞붙은 대전 중 가장 길고 잔인했던 전투. '베르됭의 도살기'라 불릴 만큼 양측 합산 70만 명 이상의 사상자가 발생하며 소모전의 극치를 보여주었습니다.",
+      impact: "🟠 최대 격전"
     },
     {
       date: "1917.04.06",
-      title: "미국의 참전 선언 (US Enters War)",
-      location: "워싱턴 D.C. (Washington)",
-      lat: 38.9, lon: -77.0, // 지도 자동 이동 시 유럽에서 줌아웃됨
-      desc: "독일의 무제한 잠수함 작전과 치머만 전보 사건으로 미국이 연합군 측에 참전. 대전의 천칭이 연합군 쪽으로 급격히 기울어짐.",
-      impact: "🔵 참전"
+      title: "미국의 참전 (전세의 역전)",
+      location: "대서양/미국 본토",
+      lat: 40.0, lon: -40.0, // 대서양 중심 표시
+      desc: "독일의 무제한 잠수함 작전과 치머만 전보 사건으로 미국이 연합군 측에 공식 참전합니다. 막대한 자원과 병력을 보유한 미국의 참전은 대전의 승패를 결정짓는 핵심 변곡점이 되었습니다.",
+      impact: "🔵 전세 역전"
     },
     {
       date: "1918.11.11",
-      title: "종전 협정 체결 (Armistice Day)",
+      title: "종전 협정 (제국의 몰락)",
       location: "콩피에뉴 (Compiègne)",
       lat: 49.4, lon: 2.8,
-      desc: "독일이 연합군과 휴전 협정에 서명하며 4년 4개월간의 교전이 종식됨. 전 유럽의 제국들이 몰락하는 계기가 됨.",
-      impact: "🟢 종전"
+      desc: "독일 제국의 붕괴와 내부 혁명으로 휴전 협정이 체결되었습니다. 전쟁 결과 독일, 오스트리아, 오스만, 러시아 제국이 해체되었으며 유럽의 지도는 완전히 새롭게 그려졌습니다.",
+      impact: "🟢 전쟁 종결"
     }
   ],
   outcome: {
-    victors: {
-      group: "연합국 (Allied Powers)",
-      nations: ["영국", "프랑스", "러시아(1917 탈퇴)", "이탈리아(1915 참전)", "미국(1917 참전) 등"]
-    },
-    losers: {
-      group: "동맹국 (Central Powers)",
-      nations: ["독일 제국", "오스트리아-헝가리 제국", "오스만 제국", "불가리아 등"]
-    },
-    impact: "독일, 오스트리아, 오스만, 러시아 등 4대 제국의 멸망 및 베르사유 체제 성립."
+    victors: ["영국", "프랑스", "미국", "이탈리아", "일본", "세르비아"],
+    losers: ["독일 제국", "오스트리아-헝가리 제국", "오스만 제국", "불가리아"],
+    summary: "베르사유 체제의 성립과 국제 연맹의 창설. 하지만 독일의 가혹한 배상금은 훗날 제2차 세계 대전의 씨앗이 됩니다."
   }
 };
 
 export default function Home() {
   const mapRef = useRef<MapRef>(null);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
-  const [timeStamp, setTimeStamp] = useState('');
 
   const handleEventClick = (event: any) => {
     setSelectedEvent(event);
     if (mapRef.current) {
       mapRef.current.flyTo({
         center: [event.lon, event.lat],
-        zoom: event.title.includes('미국') ? 3 : 6, // 미국의 경우 줌아웃
+        zoom: event.title.includes('미국') ? 3 : 6,
         essential: true,
         duration: 2500
       });
     }
   };
 
-  useEffect(() => {
-    // 💡 위키피디아 최종 고증 날짜 설정
-    setTimeStamp("2026.03.22 위키피디아 고증 기준");
-  }, []);
-
   return (
-    <main className="min-h-screen bg-[#0f1011] text-stone-100 p-6 md:p-16 font-sans selection:bg-red-900/40 overflow-x-hidden">
-      {/* 📡 글로벌 헤더: world-war 로 복귀 및 가독성 강화 */}
-      <div className="max-w-7xl mx-auto flex justify-between items-end mb-12 border-b-2 border-stone-800 pb-10">
+    <main className="min-h-screen bg-[#0d0e0f] text-slate-100 p-6 md:p-12 font-sans selection:bg-red-900/40 overflow-x-hidden">
+      {/* 📡 글로벌 헤더 */}
+      <div className="max-w-7xl mx-auto flex justify-between items-end mb-12 border-b-2 border-slate-800 pb-10">
         <div>
           <h1 className="text-5xl md:text-6xl font-black text-red-600 italic tracking-tighter uppercase leading-none">WORLD-WAR.KR</h1>
-          <p className="text-stone-400 text-xs mt-5 font-mono uppercase tracking-[0.5em]">{timeStamp}</p>
+          <p className="text-slate-500 text-xs mt-4 font-mono uppercase tracking-[0.4em] italic leading-none">The Great War Intelligence Archive</p>
         </div>
-        <div className="text-right">
-          <p className="text-stone-600 text-[9px] font-black uppercase tracking-widest mb-1.5 hover:text-red-500">Source: Wikipedia canon</p>
-          <span className="text-xs font-black text-white bg-red-600 px-5 py-2 rounded-full uppercase tracking-wider shadow-inner">INTEL MONITOR</span>
+        <div className="text-right hidden md:block">
+          <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest mb-1.5 hover:text-red-500 transition-colors cursor-default underline decoration-red-600/50 underline-offset-4">Verified by Namuwiki & Wikipedia</p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* 📜 전황 작전 일지 (디테일 강화) */}
-        <div className="lg:col-span-1 bg-stone-900/30 border border-stone-800 rounded-[40px] p-10 h-[750px] flex flex-col overflow-hidden shadow-inner hover:border-stone-700 transition-all">
-          <div className="mb-10 border-b border-stone-800 pb-8">
-            <h2 className="text-4xl font-black text-white italic tracking-tighter leading-none">{WW1_CHRONICLE.name}</h2>
-            <p className="text-xs text-stone-300 mt-5 leading-relaxed font-medium">{WW1_CHRONICLE.summary}</p>
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* 📜 전황 작전 일지 (나무위키 요약 기반) */}
+        <div className="lg:col-span-1 bg-slate-900/20 border border-slate-800 rounded-[50px] p-10 h-[780px] flex flex-col overflow-hidden shadow-2xl backdrop-blur-sm">
+          <div className="mb-10">
+            <h2 className="text-4xl font-black text-white italic tracking-tighter leading-none mb-6">{WW1_CHRONICLE.name}</h2>
+            <p className="text-sm text-slate-400 leading-relaxed font-medium mb-8 pb-8 border-b border-slate-800">{WW1_CHRONICLE.summary}</p>
           </div>
           
           <div className="space-y-6 overflow-y-auto flex-1 pr-4 custom-scrollbar">
             {WW1_CHRONICLE.events.map((event: any, idx: number) => (
               <div 
                 key={idx} 
-                className={`p-7 rounded-[35px] border-2 transition-all cursor-pointer ${selectedEvent?.title === event.title ? 'bg-red-950/20 border-red-600/60' : 'bg-stone-900 border-transparent hover:border-stone-800'}`}
+                className={`p-7 rounded-[40px] border-2 transition-all cursor-pointer group ${selectedEvent?.title === event.title ? 'bg-red-950/20 border-red-600/60' : 'bg-slate-900/50 border-transparent hover:border-slate-700'}`}
                 onClick={() => handleEventClick(event)}
               >
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[11px] font-mono text-red-500 font-bold tracking-widest">{event.date}</span>
-                  <span className="text-[9px] font-black text-slate-100 bg-red-950 px-2 py-0.5 rounded tracking-tighter uppercase">{event.impact}</span>
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-xs font-mono text-red-500 font-black tracking-widest">{event.date}</span>
+                  <span className="text-[10px] font-black text-white bg-red-600/80 px-3 py-1 rounded-full uppercase tracking-tighter shadow-md">{event.impact}</span>
                 </div>
-                <h4 className="text-2xl font-black text-white mt-2 leading-tight tracking-tight">{event.title}</h4>
-                <p className="text-xs text-stone-500 font-bold mb-5 uppercase tracking-tighter italic">{event.location}</p>
-                <p className="text-sm text-stone-300 leading-relaxed font-medium normal-case border-t border-stone-800/50 pt-5">{event.desc}</p>
+                <h4 className="text-2xl font-black text-white mt-1 leading-tight group-hover:text-red-500 transition-colors">{event.title}</h4>
+                <p className="text-[10px] text-slate-500 font-bold mb-5 uppercase italic mt-1">{event.location}</p>
+                <p className="text-sm text-slate-300 leading-relaxed font-medium normal-case pt-5 border-t border-slate-800/50">{event.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 🗺️ 디지털 작전 지도 (MapRef 추가 및 스타일 최적화) */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="h-[600px] bg-stone-900 rounded-[60px] overflow-hidden border-2 border-stone-800 shadow-2xl relative group">
+        {/* 🗺️ 디지털 작전 지도 및 결과 요약 */}
+        <div className="lg:col-span-2 space-y-10">
+          <div className="h-[550px] bg-slate-900 rounded-[60px] overflow-hidden border-2 border-slate-800 shadow-[0_0_60px_rgba(0,0,0,0.5)] relative">
             <Map
               ref={mapRef}
               initialViewState={WW1_CHRONICLE.center}
@@ -148,74 +127,46 @@ export default function Home() {
               mapboxAccessToken={MAPBOX_TOKEN}
             >
               <NavigationControl position="top-right" />
-              
-              {/* WW1 주요 사건 마커 */}
               {WW1_CHRONICLE.events.map((event: any, idx: number) => (
                 <Marker key={idx} longitude={event.lon} latitude={event.lat}>
                   <div className="group cursor-pointer relative" onClick={() => handleEventClick(event)}>
-                    <div className={`w-6 h-6 rounded-full border-2 border-white shadow-2xl transition-all ${selectedEvent?.title === event.title ? 'bg-red-600 scale-150 animate-pulse' : 'bg-stone-700 opacity-60'}`}></div>
-                    
-                    {/* 지도 위 지명 라벨 */}
-                    <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-stone-950/95 text-red-500 text-[10px] font-black px-3 py-1.5 rounded-md border border-red-900 opacity-0 group-hover:opacity-100 transition-opacity shadow-2xl whitespace-nowrap z-30">
+                    <div className={`w-6 h-6 rounded-full border-2 border-white shadow-2xl transition-all ${selectedEvent?.title === event.title ? 'bg-red-600 scale-150 animate-pulse shadow-red-600/50' : 'bg-slate-700 opacity-60'}`}></div>
+                    <div className="absolute top-10 left-1/2 -translate-x-1/2 bg-slate-950/95 text-red-500 text-[11px] font-black px-4 py-2 rounded-xl border border-red-900/50 opacity-0 group-hover:opacity-100 transition-opacity shadow-2xl z-50 whitespace-nowrap">
                       {event.location}
                     </div>
                   </div>
                 </Marker>
               ))}
-
-              {selectedEvent && (
-                <Popup
-                  longitude={selectedEvent.lon}
-                  latitude={selectedEvent.lat}
-                  anchor="bottom"
-                  onClose={() => setSelectedEvent(null)}
-                  closeButton={false}
-                  className="z-50"
-                >
-                  <div className="p-4 text-black font-sans max-w-[250px] bg-white rounded-xl">
-                    <span className="text-[10px] font-mono text-red-600 font-black">{selectedEvent.date} CAMPAIGN</span>
-                    <h5 className="text-lg font-black mb-1.5 leading-tight tracking-tight">{selectedEvent.title}</h5>
-                    <p className="text-xs leading-snug font-medium text-stone-700">{selectedEvent.desc}</p>
-                  </div>
-                </Popup>
-              )}
             </Map>
           </div>
 
-          {/* 📊 전쟁 결과 요약 섹션 (Outcome Panel) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <OutcomeCard 
-              title="승전국 (The Allies)" 
-              group={WW1_CHRONICLE.outcome.victors.group} 
-              nations={WW1_CHRONICLE.outcome.victors.nations} 
-              color="text-blue-500"
-            />
-            <OutcomeCard 
-              title="패전국 (Central Powers)" 
-              group={WW1_CHRONICLE.outcome.losers.group} 
-              nations={WW1_CHRONICLE.outcome.losers.nations} 
-              color="text-red-500"
-            />
+          {/* 📊 전쟁의 결과 (Final Report) */}
+          <div className="bg-slate-900/30 border-2 border-slate-800 p-10 rounded-[50px] shadow-2xl backdrop-blur-md">
+            <h3 className="text-slate-500 text-[10px] font-black uppercase mb-8 tracking-[0.5em] font-mono border-l-4 border-red-600 pl-4 italic">Post-War Analysis</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-10">
+              <div>
+                <p className="text-blue-500 text-sm font-black uppercase tracking-widest mb-4 italic">승전국 (Allied Powers)</p>
+                <div className="flex flex-wrap gap-2">
+                  {WW1_CHRONICLE.outcome.victors.map((v: string) => (
+                    <span key={v} className="px-4 py-2 bg-slate-800 rounded-2xl text-xs font-bold text-white hover:bg-blue-900/50 transition-colors">{v}</span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-red-500 text-sm font-black uppercase tracking-widest mb-4 italic">패전국 (Central Powers)</p>
+                <div className="flex flex-wrap gap-2">
+                  {WW1_CHRONICLE.outcome.losers.map((l: string) => (
+                    <span key={l} className="px-4 py-2 bg-slate-800 rounded-2xl text-xs font-bold text-white hover:bg-red-900/50 transition-colors">{l}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 font-medium leading-relaxed border-t border-slate-800 pt-8 italic">
+              <span className="text-white font-black not-italic mr-2">요약:</span> {WW1_CHRONICLE.outcome.summary}
+            </p>
           </div>
         </div>
       </div>
     </main>
-  );
-}
-
-// 🏷️ 결과 요약 카드 컴포넌트
-function OutcomeCard({ title, group, nations, color }: any) {
-  return (
-    <div className="bg-stone-900/60 border border-stone-800 p-8 rounded-[35px] shadow-xl hover:border-stone-700 transition-all">
-      <h4 className="text-stone-500 text-[10px] font-bold uppercase mb-4 tracking-[0.3em] font-mono">{title}</h4>
-      <div className="flex flex-col gap-1">
-        <p className={`text-3xl font-black leading-none ${color} tracking-tighter uppercase mb-4`}>{group}</p>
-        <div className="flex flex-wrap gap-2 pt-4 border-t border-stone-800">
-          {nations.map((nation: string, idx: number) => (
-            <span key={idx} className="text-xs font-bold text-stone-100 bg-stone-800 px-3 py-1.5 rounded-full">{nation}</span>
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }
