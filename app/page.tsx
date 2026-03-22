@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import Map, { Marker, NavigationControl, Popup, MapRef } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// 🔑 박재준님 전용 실시간 API 키
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
 const GNEWS_API_KEY = 'ba2846376d87ba71fd85e5d1c422c3c8';
 const ALPHA_VANTAGE_KEY = 'XDGLHB3T4MRBSMA7';
@@ -56,7 +55,8 @@ export default function Home() {
     } catch { return { price: "134.6332", abs: "3.6731", percent: "2.80" }; }
   };
 
-  const handleTimelineClick = (item: any) => {
+  // 🖱️ 클릭 시 지도 이동 + 뉴스 사이트 이동
+  const handleTimelineAction = (item: any) => {
     setPopupInfo(item);
     if (mapRef.current) {
       mapRef.current.flyTo({
@@ -66,6 +66,10 @@ export default function Home() {
         duration: 2000
       });
     }
+    // 💡 0.5초 후 뉴스 사이트 새 탭 열기
+    setTimeout(() => {
+      window.open(item.url, '_blank');
+    }, 500);
   };
 
   const loadData = async (type: 'MIDDLE_EAST' | 'RUSSIA_UKRAINE') => {
@@ -77,17 +81,22 @@ export default function Home() {
 
     setStats({
       type,
-      name: type === 'MIDDLE_EAST' ? "중동 전쟁 상황판" : "러우 전쟁 상황판",
+      name: type === 'MIDDLE_EAST' ? "중동 전면전 상황실" : "러우 전쟁 상황실",
       days: type === 'MIDDLE_EAST' ? getDiffDays("2026-02-28") : getDiffDays("2022-02-24"),
       deaths: `${liveDeaths}+`,
       damage: type === 'MIDDLE_EAST' ? "$120B" : "$486B",
       oil: type === 'MIDDLE_EAST' ? oil : null,
       timeline: type === 'MIDDLE_EAST' ? [
-        { date: "02.28 11:40", event: "테헤란 內 하메나이 암살 (정밀 드론 타격)", risk: "🔴 위기", lat: 35.6892, lon: 51.3890, img: "https://images.unsplash.com/photo-1590611910609-0d293d058a9e?q=80&w=400" },
-        { date: "03.02 03:00", event: "호르무즈 해협 이란 해군 전면 봉쇄 단행", risk: "🔴 위기", lat: 26.59, lon: 56.45, img: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=400" },
-        { date: "03.15 22:30", event: "미 해군 제5함대 호르무즈 해협 전진 배치", risk: "🟠 경계", lat: 26.2, lon: 50.6, img: "https://images.unsplash.com/photo-1588667355106-9a2f267a0a6a?q=80&w=400" },
-        { date: "03.22 현재", event: "이란 미사일 기지 가동 포착 / 위기 고조", risk: "🔴 위기", lat: 32.65, lon: 51.66, img: "https://images.unsplash.com/photo-1524169220946-12efd782aab4?q=80&w=400" }
-      ] : []
+        { date: "02.28 11:40", event: "테헤란 內 하메나이 암살 (정밀 드론 타격)", risk: "🔴 위기", lat: 35.6892, lon: 51.3890, url: "https://www.reuters.com/world/middle-east/" },
+        { date: "02.28 14:15", event: "이란 국가안보최고회의 긴급 소집 및 이스라엘 보복 선포", risk: "🔴 위기", lat: 35.6892, lon: 51.3890, url: "https://www.aljazeera.com/where/iran/" },
+        { date: "03.02 03:00", event: "호르무즈 해협 이란 해군 전면 봉쇄 단행 - 유조선 통행 중단", risk: "🔴 위기", lat: 26.59, lon: 56.45, url: "https://www.bloomberg.com/energy" },
+        { date: "03.05 09:00", event: "이스라엘 국방부(IDF) 예비군 추가 소집 및 북부 전선 비상경계", risk: "🟠 경계", lat: 31.7683, lon: 35.2137, url: "https://www.timesofisrael.com/" },
+        { date: "03.15 22:30", event: "미 해군 제5함대 항공모함 타격단 호르무즈 해협 전진 배치", risk: "🟠 경계", lat: 26.2, lon: 50.6, url: "https://www.navy.mil/" },
+        { date: "03.22 현재", event: "이란 탄도 미사일 기지 가동 포착 / 전면전 위기 최고조", risk: "🔴 위기", lat: 32.65, lon: 51.66, url: "https://www.bbc.com/news/world/middle_east" }
+      ] : [
+        { date: "22.02.24", event: "러시아 군, 우크라이나 전면 침공 개시", risk: "🔴 위기", lat: 50.45, lon: 30.52, url: "https://www.ukrinform.net/" },
+        { date: "26.03 현재", event: "동부 전선 소모전 지속 및 에너지 인프라 대상 드론 공격 격화", risk: "🟠 경계", lat: 48.0, lon: 37.8, url: "https://kyivindependent.com/" }
+      ]
     });
   };
 
@@ -95,26 +104,25 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans selection:bg-red-500/30">
-      {/* 상단 통합 헤더 */}
       <div className="max-w-7xl mx-auto flex justify-between items-end mb-10 border-b border-slate-800 pb-8">
         <div>
           <h1 className="text-4xl font-black text-red-600 italic tracking-tighter uppercase leading-none">WARBOARD</h1>
-          <p className="text-slate-500 text-[9px] mt-3 font-mono uppercase tracking-[0.5em]">Real-time Strategic Intelligence / world-war.kr</p>
+          <p className="text-slate-500 text-[9px] mt-3 font-mono uppercase tracking-[0.5em]">Global Conflict Data-Center / world-war.kr</p>
         </div>
-        {stats && <button onClick={() => setStats(null)} className="text-[10px] font-bold border border-slate-700 px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all">CLOSE MONITOR</button>}
+        {stats && <button onClick={() => setStats(null)} className="text-[10px] font-bold border border-slate-700 px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all">MAIN MENU</button>}
       </div>
 
       {!stats ? (
-        <div className="max-w-7xl mx-auto h-[400px] bg-slate-900/10 border-2 border-dashed border-slate-800 rounded-[50px] flex flex-col items-center justify-center space-y-10">
+        <div className="max-w-7xl mx-auto h-[400px] bg-slate-900/10 border-2 border-dashed border-slate-800 rounded-[50px] flex flex-col items-center justify-center space-y-10 text-center px-4">
+          <p className="text-slate-600 text-[10px] font-black uppercase tracking-[0.6em] animate-pulse">분석할 분쟁 구역을 선택하십시오</p>
           <div className="flex flex-wrap justify-center gap-6">
-            <button onClick={() => loadData('MIDDLE_EAST')} className="px-12 py-6 bg-red-600 rounded-3xl font-black text-lg hover:scale-105 transition-all shadow-2xl">중동 전쟁 실시간 분석</button>
-            <button onClick={() => loadData('RUSSIA_UKRAINE')} className="px-12 py-6 bg-blue-700 rounded-3xl font-black text-lg hover:scale-105 transition-all shadow-2xl">러우 전쟁 실시간 분석</button>
+            <button onClick={() => loadData('MIDDLE_EAST')} className="px-12 py-6 bg-red-600 rounded-3xl font-black text-lg hover:scale-105 transition-all shadow-2xl shadow-red-900/20 tracking-tighter">중동 전쟁 (이란-이스라엘)</button>
+            <button onClick={() => loadData('RUSSIA_UKRAINE')} className="px-12 py-6 bg-blue-700 rounded-3xl font-black text-lg hover:scale-105 transition-all shadow-2xl shadow-blue-900/20 tracking-tighter">러우 전쟁 (우크라이나)</button>
           </div>
         </div>
       ) : (
         <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-700">
           
-          {/* 주요 수치 지표 (상단 고정) */}
           <div className={`grid grid-cols-1 md:grid-cols-2 ${stats.type === 'MIDDLE_EAST' ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4`}>
             <StatCard title="교전 기간" value={`${stats.days}일차`} sub="자동 동기화 중" color="text-white" />
             <StatCard title="추정 사망자" value={stats.deaths} sub={timeStamp} color="text-red-500" extra="LIVE" />
@@ -124,24 +132,22 @@ export default function Home() {
             )}
           </div>
 
-          {/* 작전 일지 & 지도 통합 보드 */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* 📜 작전 일지 리스트 */}
+            {/* 📜 깔끔한 뉴스 타임라인 */}
             <div className="lg:col-span-1 bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 h-[550px] flex flex-col overflow-hidden">
-              <h3 className="text-slate-500 text-[10px] font-bold uppercase mb-8 tracking-widest border-l-4 border-red-600 pl-3 italic font-black">Combat Intelligence Log</h3>
+              <h3 className="text-slate-500 text-[10px] font-bold uppercase mb-8 tracking-widest border-l-4 border-red-600 pl-3 italic font-black">Combat Action Log</h3>
               <div className="space-y-6 overflow-y-auto flex-1 pr-2 scrollbar-hide">
                 {stats.timeline.map((item: any, idx: number) => (
-                  <div key={idx} className="flex gap-4 border-b border-slate-800/50 pb-6 last:border-0 cursor-pointer group" onClick={() => handleTimelineClick(item)}>
-                    <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded-xl border border-slate-800">
-                      <img src={item.img} alt="현장" className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[9px] font-mono text-red-500 font-black">{item.date}</span>
-                        <span className="text-[8px] font-black text-slate-100 bg-red-950 px-2 py-0.5 rounded uppercase">{item.risk}</span>
+                  <div key={idx} className="relative pl-6 border-l border-slate-800 pb-6 last:border-0 cursor-pointer group" onClick={() => handleTimelineAction(item)}>
+                    <div className="absolute -left-[5px] top-1 w-2.5 h-2.5 bg-red-600 rounded-full group-hover:scale-150 transition-transform"></div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[10px] font-mono text-red-500 font-black">{item.date}</span>
+                      <div className="flex gap-2">
+                        <span className="text-[8px] font-black text-slate-100 bg-red-950 px-2 py-0.5 rounded uppercase tracking-tighter">{item.risk}</span>
+                        <span className="text-[8px] font-black text-white bg-slate-800 px-2 py-0.5 rounded uppercase group-hover:bg-red-600 transition-colors">News ↗</span>
                       </div>
-                      <p className="text-xs text-slate-300 font-bold leading-snug group-hover:text-white transition-colors">{item.event}</p>
                     </div>
+                    <p className="text-sm text-slate-300 font-bold leading-relaxed group-hover:text-white transition-colors">{item.event}</p>
                   </div>
                 ))}
               </div>
@@ -161,9 +167,10 @@ export default function Home() {
                 
                 {popupInfo && (
                   <Popup longitude={popupInfo.lon} latitude={popupInfo.lat} anchor="top" onClose={() => setPopupInfo(null)} className="z-50" closeButton={false}>
-                    <div className="p-2 text-black max-w-[180px]">
-                      <img src={popupInfo.img} className="w-full h-20 object-cover rounded-lg mb-2" />
-                      <p className="text-[10px] font-black leading-tight">{popupInfo.event}</p>
+                    <div className="p-3 text-black max-w-[200px]">
+                      <p className="text-[10px] font-black text-red-600 mb-1">{popupInfo.date}</p>
+                      <p className="text-xs font-black leading-snug">{popupInfo.event}</p>
+                      <p className="text-[9px] mt-2 text-slate-500 font-bold italic underline">자세한 뉴스 보기 클릭</p>
                     </div>
                   </Popup>
                 )}
@@ -171,7 +178,7 @@ export default function Home() {
                 <Marker longitude={56.3} latitude={26.6}>
                   <div className="relative cursor-pointer">
                     <div className="w-12 h-12 rounded-full animate-ping absolute -top-4 -left-4 opacity-20 bg-red-600"></div>
-                    <div className="w-4 h-4 rounded-full border-2 border-white bg-red-600 shadow-2xl shadow-red-600"></div>
+                    <div className="w-4 h-4 rounded-full border-2 border-white bg-red-600 shadow-2xl"></div>
                   </div>
                 </Marker>
               </Map>
@@ -191,7 +198,7 @@ function StatCard({ title, value, color, extra, sub, oilInfo }: any) {
     <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-[30px] shadow-xl hover:bg-slate-900/80 transition-all">
       <h4 className="text-slate-600 text-[8px] font-bold uppercase mb-3 tracking-[0.2em] font-mono">{title}</h4>
       <div className="flex flex-col gap-1">
-        <p className={`text-3xl font-black leading-none ${color} tracking-tighter`}>{value}</p>
+        <p className={`text-4xl font-black leading-none ${color} tracking-tighter`}>{value}</p>
         {isOil && (
           <span className={`text-[10px] font-black ${isPositive ? 'text-red-500' : 'text-blue-500'} flex items-center gap-1 mt-2`}>
             {isPositive ? '▲' : '▼'} +{oilInfo.abs} (+{oilInfo.percent}%)
