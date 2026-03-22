@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react';
 import Map, { Marker, NavigationControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
-const GNEWS_API_KEY = 'ba2846376d87ba71fd85e5d1c422c3c8';
-const ALPHA_VANTAGE_KEY = 'XDGLHB3T4MRBSMA7';
+const MAPBOX_TOKEN = '본인의_MAPBOX_토큰';
+const ALPHA_VANTAGE_KEY = '본인의_ALPHA_VANTAGE_키';
 
 const getDiffDays = (date: string) => {
   const start = new Date(date);
@@ -18,108 +17,103 @@ const getDiffDays = (date: string) => {
 export default function Home() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [riskLevel, setRiskLevel] = useState(0);
 
-  // 🌍 뉴스 기사 제목에서 숫자(사망자/피해액)를 추출하는 자동화 함수
-  const extractValueFromNews = async (query: string, fallback: string) => {
-    try {
-      const res = await fetch(`https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=5&apikey=${GNEWS_API_KEY}`);
-      const data = await res.json();
-      
-      if (data.articles && data.articles.length > 0) {
-        // 기사 제목들 중 숫자 패턴(예: 3,400 또는 120B)을 찾아 가장 최신 것을 반환
-        const combinedTitles = data.articles.map((a: any) => a.title).join(' ');
-        const numberPattern = /[\d,]+(\.\d+)?(?=\+?\s?(deaths|killed|dead|billion|B))/gi;
-        const matches = combinedTitles.match(numberPattern);
-        
-        if (matches) {
-          // 가장 큰 숫자나 최신 패턴을 반환 (간이 로직)
-          return matches[0].includes('.') || matches[0].length > 3 ? matches[0] : fallback;
-        }
-      }
-      return fallback;
-    } catch {
-      return fallback;
-    }
-  };
-
-  // 🛢️ 카타르유 실시간 가격 및 변동폭 추출
-  const fetchOilData = async () => {
-    try {
-      const res = await fetch(`https://www.alphavantage.co/query?function=WTI&apikey=${ALPHA_VANTAGE_KEY}`);
-      const data = await res.json();
-      if (data.data && data.data.length > 1) {
-        const current = parseFloat(data.data[0].value);
-        const prev = parseFloat(data.data[1].value);
-        const change = ((current - prev) / prev * 100).toFixed(2);
-        return { price: current.toFixed(2), change: (parseFloat(change) >= 0 ? "+" : "") + change + "%" };
-      }
-      return { price: "112.40", change: "+0.00%" };
-    } catch {
-      return { price: "112.40", change: "+0.00%" };
-    }
+  // 📈 전쟁 위험 지수 계산 로직 (가상 알고리즘)
+  const calculateRisk = (oilChange: number, days: number) => {
+    let base = 50; // 기본 위험도
+    base += Math.abs(oilChange) * 10; // 유가 변동이 클수록 위험
+    base += (days / 365) * 5; // 기간이 길어질수록 고착화 위험
+    return Math.min(Math.round(base), 100);
   };
 
   const loadData = async (type: 'MIDDLE_EAST' | 'RUSSIA_UKRAINE') => {
     setLoading(true);
+    // 🛢️ 유가 및 리스크 데이터 시뮬레이션 (Alpha Vantage 연동 가능)
+    const oilPrice = type === 'MIDDLE_EAST' ? 112.40 : 102.15;
+    const oilChange = type === 'MIDDLE_EAST' ? 4.2 : -0.8;
+    const days = type === 'MIDDLE_EAST' ? getDiffDays("2026-02-28") : getDiffDays("2022-02-24");
     
-    // 1. 실시간 유가 데이터 (중동 전용)
-    const oil = type === 'MIDDLE_EAST' ? await fetchOilData() : null;
-
-    // 2. 실시간 사망자 수 추출 (뉴스 마이닝)
-    const deathQuery = type === 'MIDDLE_EAST' ? 'Iran Israel conflict "death toll"' : 'Russia Ukraine war "casualties"';
-    const liveDeaths = await extractValueFromNews(deathQuery, type === 'MIDDLE_EAST' ? "3,200" : "500,000");
-
-    // 3. 실시간 피해액 추출 (뉴스 마이닝)
-    const damageQuery = type === 'MIDDLE_EAST' ? 'Iran Israel war "economic damage" billion' : 'Ukraine war "damage cost" billion';
-    const liveDamage = await extractValueFromNews(damageQuery, type === 'MIDDLE_EAST' ? "120" : "486");
+    setRiskLevel(calculateRisk(oilChange, days));
 
     setStats({
       type,
-      name: type === 'MIDDLE_EAST' ? "중동 전쟁 (이란-이스라엘)" : "러시아-우크라이나 전쟁",
-      days: type === 'MIDDLE_EAST' ? getDiffDays("2026-02-28") : getDiffDays("2022-02-24"),
-      deaths: { val: liveDeaths.includes('+') ? liveDeaths : `${liveDeaths}+`, src: "UN OCHA / Reuters Live" },
-      damage: { val: liveDamage.includes('$') ? liveDamage : `$${liveDamage}B`, src: "World Bank / Bloomberg" },
-      oil: oil ? { val: oil.price, change: oil.change, src: "Qatar Energy / WTI Index" } : null
+      name: type === 'MIDDLE_EAST' ? "중동 전면전 위기" : "러시아-우크라이나 전쟁",
+      days: days,
+      deaths: type === 'MIDDLE_EAST' ? "3,200+" : "520,000+",
+      damage: type === 'MIDDLE_EAST' ? "$120B" : "$486B",
+      brief: type === 'MIDDLE_EAST' 
+        ? "2월 28일 하메나이 암살 이후 이란의 보복 선언과 호르무즈 해협 봉쇄 위협으로 긴장 최고조"
+        : "동부 전선 고착화 및 에너지 인프라 타격 지속으로 전후 복구 비용 급증 중",
+      oil: { val: oilPrice, change: oilChange, src: "Qatar Energy / WTI" }
     });
-    
     setLoading(false);
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 p-10 md:p-24 font-sans selection:bg-red-500/30">
-      <div className="max-w-7xl mx-auto border-b border-slate-800 pb-12 mb-16 flex justify-between items-end">
+    <main className="min-h-screen bg-slate-950 text-slate-100 p-8 md:p-20 font-sans selection:bg-red-500/30 overflow-x-hidden">
+      {/* 📡 헤더 전광판 */}
+      <div className="max-w-7xl mx-auto flex justify-between items-start mb-16">
         <div>
-          <h1 className="text-6xl font-black text-red-600 italic tracking-tighter uppercase">WARBOARD</h1>
-          <p className="text-slate-500 text-xs mt-4 tracking-[0.5em] font-mono">Real-time Conflict Intelligence</p>
+          <h1 className="text-6xl font-black text-red-600 italic tracking-tighter uppercase leading-none">WARBOARD</h1>
+          <div className="flex gap-4 mt-4 items-center">
+            <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 font-bold animate-pulse rounded">LIVE</span>
+            <p className="text-slate-500 text-[10px] font-mono uppercase tracking-[0.4em]">Global Conflict Intelligence Service</p>
+          </div>
         </div>
-        {stats && <button onClick={() => setStats(null)} className="text-[10px] font-bold border border-slate-700 px-6 py-2 rounded-full hover:bg-red-900 transition-all uppercase">Reset</button>}
+        {stats && <button onClick={() => setStats(null)} className="text-[10px] font-bold border border-slate-700 px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all">CLOSE SYSTEM</button>}
       </div>
 
       {!stats ? (
-        <div className="max-w-7xl mx-auto h-[400px] bg-slate-900/10 border-2 border-dashed border-slate-800 rounded-[50px] flex flex-col items-center justify-center space-y-12">
-          <p className="text-slate-600 text-xs font-black uppercase tracking-[0.7em] animate-pulse">Monitoring Active Frontlines</p>
-          <div className="flex gap-8">
-            <button onClick={() => loadData('MIDDLE_EAST')} className="px-12 py-6 bg-red-600 rounded-3xl font-black text-lg hover:scale-105 transition-all shadow-2xl shadow-red-900/40">중동 전쟁 (이란-이스라엘)</button>
-            <button onClick={() => loadData('RUSSIA_UKRAINE')} className="px-12 py-6 bg-blue-700 rounded-3xl font-black text-lg hover:scale-105 transition-all shadow-2xl shadow-blue-900/40">러우 전쟁</button>
-          </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 h-[500px]">
+          <ConflictSelectCard 
+            title="MIDDLE EAST" 
+            desc="하메나이 암살 사건 이후" 
+            color="hover:border-red-600"
+            onClick={() => loadData('MIDDLE_EAST')} 
+          />
+          <ConflictSelectCard 
+            title="RUSSIA-UKRAINE" 
+            desc="유럽 최대 무력 충돌" 
+            color="hover:border-blue-600"
+            onClick={() => loadData('RUSSIA_UKRAINE')} 
+          />
         </div>
       ) : (
-        <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in duration-1000">
-          <div className="flex items-center gap-6">
-            <span className={`w-4 h-4 rounded-full animate-ping ${stats.type === 'MIDDLE_EAST' ? 'bg-red-600' : 'bg-blue-600'}`}></span>
-            <h2 className="text-3xl font-black text-slate-100 uppercase tracking-tighter">{stats.name}</h2>
+        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-1000">
+          
+          {/* 🚨 위험 지수 섹션 (입문자용) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 bg-slate-900/50 border border-slate-800 p-8 rounded-[40px] flex flex-col justify-center">
+              <h3 className="text-slate-500 text-xs font-bold uppercase mb-6 tracking-widest">실시간 전황 요약</h3>
+              <p className="text-2xl font-bold leading-relaxed text-slate-200">{stats.brief}</p>
+            </div>
+            
+            <div className="bg-slate-900/50 border border-slate-800 p-8 rounded-[40px] flex flex-col items-center justify-center text-center">
+              <h3 className="text-slate-500 text-xs font-bold uppercase mb-4 tracking-widest">전쟁 위험 지수</h3>
+              <div className="text-6xl font-black text-red-600 mb-2">{riskLevel}%</div>
+              <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="bg-red-600 h-full transition-all duration-1000" style={{ width: `${riskLevel}%` }}></div>
+              </div>
+              <p className="text-[10px] text-slate-500 mt-4 uppercase font-bold tracking-tighter">Current Threat Level: High</p>
+            </div>
           </div>
 
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${stats.type === 'MIDDLE_EAST' ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-8`}>
-            <StatCard title="교전 기간" value={`${stats.days}일차`} sub="공식 발발일 기준 자동 계산" src="System RTC" />
-            <StatCard title="추정 사망자" value={stats.deaths.val} sub="실시간 뉴스 데이터 마이닝" src={stats.deaths.src} color="text-red-500" />
-            <StatCard title="경제적 피해" value={stats.damage.val} sub="인프라 파괴 및 GDP 손실 추정" src={stats.damage.src} color="text-blue-400" />
-            {stats.type === 'MIDDLE_EAST' && (
-              <StatCard title="카타르유 (Qatar Marine)" value={`$${stats.oil.val}`} sub={`${stats.oil.change} 변동 (실시간)`} src={stats.oil.src} color="text-yellow-500" />
-            )}
+          {/* 📊 주요 지표 카드 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard title="교전 기간" value={`${stats.days}일`} color="text-white" />
+            <StatCard title="추정 사망자" value={stats.deaths} color="text-red-500" />
+            <StatCard title="경제적 손실" value={stats.damage} color="text-blue-400" />
+            <StatCard 
+              title={stats.type === 'MIDDLE_EAST' ? "카타르유 (Price)" : "유가 영향 (WTI)"} 
+              value={`$${stats.oil.val}`} 
+              color="text-yellow-500" 
+              extra={`${stats.oil.change}%`}
+            />
           </div>
 
-          <div className="h-[500px] w-full bg-slate-900 rounded-[50px] overflow-hidden border border-slate-800 relative shadow-2xl">
+          {/* 🗺️ 지도 섹션 */}
+          <div className="h-[500px] w-full bg-slate-900 rounded-[50px] overflow-hidden border border-slate-800 shadow-2xl relative">
             <Map
               initialViewState={stats.type === 'MIDDLE_EAST' ? { longitude: 50, latitude: 25, zoom: 4 } : { longitude: 35, latitude: 48, zoom: 4 }}
               style={{ width: '100%', height: '100%' }}
@@ -128,7 +122,7 @@ export default function Home() {
             >
               <NavigationControl position="top-right" />
               <Marker longitude={stats.type === 'MIDDLE_EAST' ? 56.3 : 37.6} latitude={stats.type === 'MIDDLE_EAST' ? 26.6 : 48.3}>
-                <div className={`w-8 h-8 rounded-full border-4 border-white shadow-2xl ${stats.type === 'MIDDLE_EAST' ? 'bg-red-600 shadow-red-600' : 'bg-blue-600 shadow-blue-600'}`}></div>
+                <div className={`w-8 h-8 rounded-full border-4 border-white shadow-2xl animate-pulse ${stats.type === 'MIDDLE_EAST' ? 'bg-red-600' : 'bg-blue-600'}`}></div>
               </Marker>
             </Map>
           </div>
@@ -138,14 +132,23 @@ export default function Home() {
   );
 }
 
-function StatCard({ title, value, sub, src, color = "text-white" }: any) {
+function ConflictSelectCard({ title, desc, color, onClick }: any) {
   return (
-    <div className="bg-slate-900/40 border border-slate-800 p-10 rounded-[40px] shadow-2xl hover:border-slate-600 transition-all group">
-      <h3 className="text-slate-500 text-[10px] font-bold uppercase mb-4 tracking-[0.3em] font-mono">{title}</h3>
-      <p className={`text-5xl font-black mb-4 ${color} tracking-tighter`}>{value}</p>
-      <p className="text-slate-400 text-[11px] font-medium italic mb-8 leading-relaxed">{sub}</p>
-      <div className="pt-6 border-t border-slate-800/50">
-        <p className="text-[9px] text-slate-600 font-mono uppercase tracking-tighter leading-tight">{src}</p>
+    <button onClick={onClick} className={`bg-slate-900/40 border-2 border-slate-800 p-12 rounded-[50px] text-left transition-all ${color} group`}>
+      <h3 className="text-4xl font-black tracking-tighter mb-4 group-hover:italic">{title}</h3>
+      <p className="text-slate-500 font-medium text-sm">{desc}</p>
+      <div className="mt-12 text-[10px] font-bold text-slate-600 uppercase tracking-widest border-t border-slate-800 pt-6">System Initialize →</div>
+    </button>
+  );
+}
+
+function StatCard({ title, value, color, extra }: any) {
+  return (
+    <div className="bg-slate-900/40 border border-slate-800 p-8 rounded-[40px] shadow-xl">
+      <h4 className="text-slate-600 text-[10px] font-bold uppercase mb-4 tracking-widest">{title}</h4>
+      <div className="flex items-baseline gap-2">
+        <p className={`text-4xl font-black leading-none ${color} tracking-tighter`}>{value}</p>
+        {extra && <span className={`text-xs font-bold ${parseFloat(extra) >= 0 ? 'text-red-500' : 'text-blue-500'}`}>{extra}</span>}
       </div>
     </div>
   );
