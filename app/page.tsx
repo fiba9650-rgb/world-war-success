@@ -22,7 +22,6 @@ const getCurrentTimeStamp = () => {
 
 export default function Home() {
   const [mapLoading, setMapLoading] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<any>(null);
   const [timeStamp, setTimeStamp] = useState('');
 
@@ -38,7 +37,6 @@ export default function Home() {
     } catch { return fallback; }
   };
 
-  // 🛢️ Bloomberg BCOMCL 인덱스 동기화 로직
   const fetchBcomclPrice = async () => {
     try {
       const res = await fetch(`https://www.alphavantage.co/query?function=WTI&apikey=${ALPHA_VANTAGE_KEY}`);
@@ -46,29 +44,18 @@ export default function Home() {
       if (data.data && data.data.length > 1) {
         const rawCurrent = parseFloat(data.data[0].value);
         const rawPrev = parseFloat(data.data[1].value);
-        
-        // 💡 Bloomberg BCOMCL 인덱스 비율 보정 ($134.6332 기준)
-        const bcomclIndex = rawCurrent * 2.0867; // 시장 편차 보정 계수
+        const bcomclIndex = rawCurrent * 2.0867;
         const absoluteChange = (rawCurrent - rawPrev) * 2.0867;
         const percentChange = ((rawCurrent - rawPrev) / rawPrev * 100).toFixed(2);
-        
-        return { 
-          price: bcomclIndex.toFixed(4), 
-          abs: absoluteChange.toFixed(4), 
-          percent: percentChange 
-        };
+        return { price: bcomclIndex.toFixed(4), abs: absoluteChange.toFixed(4), percent: percentChange };
       }
       return { price: "134.6332", abs: "3.6731", percent: "2.80" };
-    } catch { 
-      return { price: "134.6332", abs: "3.6731", percent: "2.80" }; 
-    }
+    } catch { return { price: "134.6332", abs: "3.6731", percent: "2.80" }; }
   };
 
   const loadData = async (type: 'MIDDLE_EAST' | 'RUSSIA_UKRAINE') => {
-    setLoading(true);
     setMapLoading(true);
     setTimeStamp(getCurrentTimeStamp());
-
     const oil = await fetchBcomclPrice();
     const deathKey = type === 'MIDDLE_EAST' ? 'Israel Iran "death toll"' : 'Ukraine Russia "casualties"';
     const liveDeaths = await fetchLiveStats(deathKey, type === 'MIDDLE_EAST' ? "3,200" : "520,000");
@@ -79,14 +66,11 @@ export default function Home() {
       days: type === 'MIDDLE_EAST' ? getDiffDays("2026-02-28") : getDiffDays("2022-02-24"),
       deaths: `${liveDeaths}+`,
       damage: type === 'MIDDLE_EAST' ? "$120B" : "$486B",
-      oil: type === 'MIDDLE_EAST' ? { ...oil, src: "Bloomberg BCOMCL Index" } : null
+      oil: type === 'MIDDLE_EAST' ? oil : null
     });
-    setLoading(false);
   };
 
-  useEffect(() => {
-    setTimeStamp(getCurrentTimeStamp());
-  }, []);
+  useEffect(() => { setTimeStamp(getCurrentTimeStamp()); }, []);
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-16 font-sans selection:bg-red-500/30">
@@ -135,7 +119,7 @@ export default function Home() {
                 title="Bloomberg WTI (BCOMCL)" 
                 value={stats.oil.price} 
                 color="text-yellow-500" 
-                extra={`+${stats.oil.abs} (+${stats.oil.percent}%)`} 
+                oilInfo={stats.oil}
                 sub="Bloomberg 실시간 인덱스 지표" 
               />
             )}
@@ -146,22 +130,28 @@ export default function Home() {
   );
 }
 
-function StatCard({ title, value, color, extra, sub }: any) {
-  const isOil = title.includes("Bloomberg");
-  const isPositive = extra && extra.includes('+');
+function StatCard({ title, value, color, extra, sub, oilInfo }: any) {
+  // 💡 유가 데이터일 때만 화살표를 렌더링하도록 로직 분리
+  const isOil = !!oilInfo;
+  const isPositive = oilInfo ? parseFloat(oilInfo.abs) >= 0 : true;
   const changeColor = isPositive ? 'text-red-500' : 'text-blue-500';
 
   return (
     <div className="bg-slate-900/40 border-2 border-slate-800 p-10 rounded-[50px] shadow-xl hover:border-slate-700 transition-all relative overflow-hidden group">
       <h4 className="text-slate-600 text-[10px] font-bold uppercase mb-4 tracking-[0.3em] font-mono">{title}</h4>
       <div className="flex flex-col gap-2 relative z-10">
-        <p className={`text-4xl font-black leading-none ${color} tracking-tighter`}>
-          {isOil ? "" : ""}{value}
-        </p>
-        {extra && (
+        <p className={`text-4xl font-black leading-none ${color} tracking-tighter`}>{value}</p>
+        
+        {/* 🏹 유가 카드에만 화살표와 변동폭 노출 */}
+        {isOil && (
           <span className={`text-sm font-black ${changeColor} flex items-center gap-1`}>
-            {isPositive ? '▲' : '▼'} {extra}
+            {isPositive ? '▲' : '▼'} +{oilInfo.abs} (+{oilInfo.percent}%)
           </span>
+        )}
+
+        {/* ℹ️ 일반 지표에는 텍스트 정보만 노출 */}
+        {!isOil && extra && (
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{extra}</span>
         )}
       </div>
       <p className="text-slate-400 text-[11px] font-medium italic mt-8 border-t border-slate-800 pt-6 tracking-tight leading-relaxed">{sub}</p>
