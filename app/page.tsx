@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Map, { Marker, NavigationControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// 💡 본인의 정보를 여기에 정확히 입력하세요!
+// 💡 아래 두 곳에 본인의 키를 꼭 넣으세요!
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
 const GNEWS_API_KEY = 'ba2846376d87ba71fd85e5d1c422c3c8'; 
 
@@ -13,17 +13,13 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('Global');
 
-  // 🌍 뉴스 가져오기 함수 (GNews API 기준)
   const fetchWarNews = async (isMiddleEastFocus = false) => {
     try {
       setLoading(true);
-      
-      // 검색 쿼리 설정: 이란, 이스라엘, 미국, 호르무즈 해협 등 전략 키워드 포함
       const query = isMiddleEastFocus 
         ? 'Iran AND Israel AND USA AND ("Strait of Hormuz" OR "Red Sea")' 
         : 'war OR conflict OR military';
 
-      // GNews API 호출 주소
       const response = await fetch(
         `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=10&apikey=${GNEWS_API_KEY}`
       );
@@ -44,7 +40,6 @@ export default function Home() {
     }
   };
 
-  // 처음 접속 시 뉴스 로드
   useEffect(() => {
     fetchWarNews();
   }, []);
@@ -85,26 +80,4 @@ export default function Home() {
               news.map((item: any, idx) => (
                 <div 
                   key={idx} 
-                  className="group border-b border-slate-800/50 pb-4 last:border-0 cursor-pointer hover:bg-slate-800/20 p-2 rounded-lg transition-all" 
-                  onClick={() => window.open(item.url)}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-red-500 text-[10px] font-black uppercase tracking-widest bg-red-950/30 px-2 py-0.5 rounded">{item.source}</span>
-                    <span className="text-slate-600 text-[10px] font-mono">{item.publishedAt}</span>
-                  </div>
-                  <p className="text-sm text-slate-300 group-hover:text-white leading-relaxed font-medium transition-colors">
-                    {item.title}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="text-slate-500 text-sm text-center mt-20">검색된 실시간 뉴스가 없습니다.</p>
-            )}
-          </div>
-        </div>
-
-        {/* 지도 섹션 */}
-        <div className="lg:col-span-2 h-[700px] bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 relative shadow-2xl">
-          <Map
-            initialViewState={{ longitude: 48.0, latitude: 30.0, zoom: 3.2 }}
-            style={{ width: '100%', height: '100
+                  className="group border-b border-slate-800/50 pb-4 last:border-0 cursor-pointer hover:bg-slate-800/20 p-2
