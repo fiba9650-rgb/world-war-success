@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import Map, { Marker, NavigationControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+// 💡 본인의 정보를 여기에 정확히 입력하세요!
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
 const GNEWS_API_KEY = 'ba2846376d87ba71fd85e5d1c422c3c8'; 
 
-// 📅 날짜 및 실시간 타임스탬프 함수
+// 📅 날짜 및 타임스탬프 계산 함수
 const getDiffDays = (date: string) => {
   const start = new Date(date);
   const now = new Date();
@@ -26,12 +27,11 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('Global');
   const [timeStamp, setTimeStamp] = useState('');
 
-  // 📊 데이터 상태 (카타르유 지표 반영)
   const [stats, setStats] = useState({
     days: "0",
     deaths: { val: "12,500+", src: "UN OCHA / Reuters" },
     damage: { val: "$450B", src: "IMF / Bloomberg" },
-    oil: { val: "$102.15", src: "Qatar Marine (QP)" } // 기본 글로벌가
+    oil: { val: "102.15", src: "Qatar Marine (QP)" }
   });
 
   const updateDashboard = async (isMiddleEast = false) => {
@@ -39,12 +39,11 @@ export default function Home() {
     setTimeStamp(getCurrentTimeStamp());
     
     if (isMiddleEast) {
-      // 📍 [중동 모드] 2월 28일 사건 이후 데이터 및 카타르유 공시 지표
       setStats({
         days: getDiffDays("2026-02-28").toString(),
         deaths: { val: "3,200+", src: "조선일보 / AP 통신" },
         damage: { val: "$120B", src: "World Bank / Bloomberg" },
-        oil: { val: "$112.40", src: "Qatar Energy (Official Price)" } // 카타르유 기준
+        oil: { val: "112.40", src: "Qatar Energy (Official Price)" }
       });
       setActiveTab('Hormuz Strait');
     } else {
@@ -52,7 +51,7 @@ export default function Home() {
         days: getDiffDays("2026-02-01").toString(),
         deaths: { val: "12,500+", src: "UN OCHA / Reuters" },
         damage: { val: "$450B", src: "IMF / Bloomberg" },
-        oil: { val: "$102.15", src: "Qatar Marine (QP)" }
+        oil: { val: "102.15", src: "Qatar Marine (QP)" }
       });
       setActiveTab('Global');
     }
@@ -71,7 +70,9 @@ export default function Home() {
     }
   };
 
-  useEffect(() => { updateDashboard(false); }, []);
+  useEffect(() => {
+    updateDashboard(false);
+  }, []);
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans selection:bg-red-500/30">
@@ -83,7 +84,6 @@ export default function Home() {
         <button onClick={() => updateDashboard(false)} className="text-[10px] font-bold bg-slate-900 px-4 py-2 rounded border border-slate-700 hover:bg-red-900 transition-all">GLOBAL RESET</button>
       </div>
 
-      {/* 📊 상단 지표 영역 (카타르유 및 출처/시간 적용) */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         <StatCard title="교전 기간" value={`${stats.days}일`} subText="2월 28일 사건 이후" source="System Auto-calc" />
         <StatCard title="추정 사망자" value={stats.deaths.val} subText={timeStamp} source={stats.deaths.src} color="text-red-500" />
@@ -91,11 +91,11 @@ export default function Home() {
         <StatCard title="카타르유 (Qatar Marine)" value={`$${stats.oil.val}`} subText={timeStamp} source={stats.oil.src} color="text-yellow-500" />
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-3xl p-6 h-[550px] flex flex-col shadow-2xl">
           <h2 className="text-[10px] font-black mb-6 border-l-4 border-red-600 pl-3 uppercase tracking-widest text-slate-400">Intelligence Feed</h2>
           <div className="space-y-4 overflow-y-auto flex-1 pr-2 scrollbar-hide">
-            {news.map((item, idx) => (
+            {news.map((item: any, idx) => (
               <div key={idx} className="border-b border-slate-800/50 pb-4 last:border-0 cursor-pointer hover:bg-slate-800/40 p-2 rounded transition-all" onClick={() => window.open(item.url)}>
                 <span className="text-red-600 text-[9px] font-black uppercase">{item.source?.name}</span>
                 <p className="text-sm text-slate-300 font-medium leading-snug mt-1">{item.title}</p>
@@ -125,7 +125,16 @@ export default function Home() {
   );
 }
 
+// 🏷️ 개별 카드 컴포넌트 (함수 외부로 명확히 분리)
 function StatCard({ title, value, subText, source, color = "text-white" }: any) {
   return (
     <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl hover:border-slate-700 transition-all">
-      <h3 className="text-slate-50
+      <h3 className="text-slate-500 text-[10px] font-bold uppercase mb-1 tracking-widest">{title}</h3>
+      <p className={`text-3xl font-black ${color}`}>{value}</p>
+      <p className="text-[9px] text-slate-400 mt-1 font-medium">{subText}</p>
+      <div className="mt-3 pt-3 border-t border-slate-800/30">
+        <p className="text-[9px] text-slate-600 font-mono uppercase tracking-tighter">출처: {source}</p>
+      </div>
+    </div>
+  );
+}
