@@ -4,9 +4,7 @@ import { useState } from 'react';
 import Map, { Marker, NavigationControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// 💡 여기에 본인의 Mapbox Token을 직접 넣으면 가장 확실하게 작동합니다.
-// 만약 토큰이 없다면 mapbox.com에서 무료로 만드실 수 있어요!
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY203M3p2YzhsMGZrazJpcHJ6bmZndXFhZCJ9.7X8_mZ_rD_Y_Z_Z_Z_Z_Z_Z'; // 여기에 본인의 토큰을 넣으세요.
+const MAPBOX_TOKEN = 'ppk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q; 
 
 interface StatCardProps {
   title: string;
