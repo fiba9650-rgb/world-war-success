@@ -1,104 +1,129 @@
-'use client'; 
+'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Map, { Marker, NavigationControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q'; 
-
-// --- 데이터 정의 (공식 자료 기반 시뮬레이션) ---
-const WAR_DATA = {
-  default: {
-    title: "글로벌 분쟁 현황",
-    stats: { days: "22", deaths: "12,500+", refugees: "1.2M", oil: "$108.00" },
-    news: [
-      { tag: "군사", source: "Reuters", content: "미 국방부, 주요 미사일 기지 정밀 타격 발표" },
-      { tag: "외교", source: "AP News", content: "UN 안보리, 중동 지역 휴전안 표결 예정" }
-    ]
-  },
-  middleEast: {
-    title: "이란 - 이스라엘 / 미국 분쟁",
-    stats: { days: "14", deaths: "3,200+", refugees: "450K", oil: "$112.50 (WTI)" },
-    news: [
-      { tag: "공식", source: "Reuters", content: "이스라엘 국방부: 이란 본토 미사일 시설 7곳 타격 확인" },
-      { tag: "속보", source: "AP", content: "미 해군 5함대, 호르무즈 해협 통행 전면 통제 발표" },
-      { tag: "경제", source: "Bloomberg", content: "중동발 공급망 마비로 인한 글로벌 유가 15% 추가 급등 전망" }
-    ]
-  }
-};
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
+const NEWS_API_KEY = '51ac064dbab6418f93586a06507e6e24'; 
 
 export default function Home() {
-  // 현재 선택된 전쟁 데이터를 관리하는 '상태'입니다.
-  const [selectedWar, setSelectedWar] = useState(WAR_DATA.default);
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('Global');
+
+  // 🌍 확장된 키워드 필터링 함수
+  const fetchWarNews = async (isMiddleEastFocus = false) => {
+    try {
+      setLoading(true);
+      
+      // 💡 전략적 키워드 추가: 호르무즈 해협, 홍해, 원유 가격 등 관련 이슈 포함
+      const middleEastQuery = encodeURIComponent(
+        '(Iran OR Israel OR USA) AND ("Strait of Hormuz" OR "Red Sea" OR "Houthi" OR "Oil Price" OR "Missile")'
+      );
+      const globalQuery = encodeURIComponent('war OR conflict OR military');
+
+      const query = isMiddleEastFocus ? middleEastQuery : globalQuery;
+
+      const response = await fetch(
+        `https://newsapi.org/v2/everything?q=${query}&language=en&sortBy=publishedAt&pageSize=12&apiKey=${NEWS_API_KEY}`
+      );
+      const data = await response.json();
+      
+      if (data.articles) {
+        setNews(data.articles.map((art: any) => ({
+          source: art.source.name,
+          title: art.title,
+          url: art.url,
+          publishedAt: new Date(art.publishedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        })));
+      }
+    } catch (error) {
+      console.error("뉴스 로딩 실패:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchWarNews(); }, []);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans">
-      {/* 헤더 */}
+    <main className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans selection:bg-red-500/30">
+      {/* 헤더 영역 */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b border-slate-800 pb-6 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
-            <h1 className="text-4xl font-black text-white tracking-tighter">WARBOARD</h1>
+            <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse shadow-[0_0_15px_red]"></div>
+            <h1 className="text-4xl font-black text-white tracking-tighter uppercase">WARBOARD</h1>
           </div>
-          <p className="text-slate-500 text-sm font-medium italic">{selectedWar.title} 모니터링 중</p>
+          <p className="text-slate-500 text-sm font-medium">
+            현재 모니터링: <span className={activeTab === 'Global' ? 'text-blue-400' : 'text-red-500 font-bold'}>{activeTab} Conflict Area</span>
+          </p>
         </div>
         <button 
-          onClick={() => setSelectedWar(WAR_DATA.default)}
-          className="text-xs text-blue-400 bg-blue-900/30 px-3 py-1 rounded-full border border-blue-800 hover:bg-blue-800/50"
+          onClick={() => { setActiveTab('Global'); fetchWarNews(false); }}
+          className="text-xs font-bold text-slate-400 bg-slate-900 px-4 py-2 rounded-lg border border-slate-800 hover:text-white hover:bg-slate-800 transition-all"
         >
-          전체 보기 초기화
+          GLOBAL VIEW RESET
         </button>
       </div>
 
-      {/* 상단 지표 카드: 선택된 데이터에 따라 숫자가 변함 */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <StatCard title="교전 기간" value={selectedWar.stats.days + "일째"} sub="공식 교전 개시일 기준" color="text-white" />
-        <StatCard title="추정 사망자" value={selectedWar.stats.deaths} sub="국제기구(UN) 합산치" color="text-red-500" />
-        <StatCard title="난민 발생" value={selectedWar.stats.refugees} sub="주변국 유입 공식 집계" color="text-blue-400" />
-        <StatCard title="유가 영향" value={selectedWar.stats.oil} sub="실시간 중동유 등락 반영" color="text-yellow-500" />
-      </div>
-
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* 왼쪽: 실시간 뉴스 피드 */}
-        <div className="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl h-fit">
-          <h2 className="text-lg font-bold mb-6 flex items-center border-l-4 border-red-600 pl-3">
-            {selectedWar.title} 관련 뉴스
+        {/* 왼쪽: 실시간 뉴스 피드 (스크롤 가능하게 수정) */}
+        <div className="lg:col-span-1 bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-2xl h-[700px] flex flex-col">
+          <h2 className="text-lg font-bold mb-6 flex items-center border-l-4 border-red-600 pl-3 tracking-tight">
+            INTELLIGENCE FEED
           </h2>
-          <div className="space-y-6">
-            {selectedWar.news.map((item, idx) => (
-              <div key={idx} className="border-b border-slate-800 pb-4 last:border-0 last:pb-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="bg-red-900 text-red-200 text-[10px] px-2 py-0.5 rounded font-bold">{item.tag}</span>
-                  <span className="text-slate-500 text-xs font-mono">{item.source}</span>
-                </div>
-                <p className="text-sm text-slate-300 leading-relaxed">{item.content}</p>
+          <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
+            {loading ? (
+              <div className="space-y-4">
+                {[1,2,3,4].map(i => <div key={i} className="h-24 bg-slate-800/50 animate-pulse rounded-xl"></div>)}
               </div>
-            ))}
+            ) : (
+              news.map((item: any, idx) => (
+                <div 
+                  key={idx} 
+                  className="group border-b border-slate-800/50 pb-4 last:border-0 cursor-pointer hover:bg-slate-800/20 p-2 rounded-lg transition-all" 
+                  onClick={() => window.open(item.url)}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-red-500 text-[10px] font-black uppercase tracking-widest bg-red-950/30 px-2 py-0.5 rounded">{item.source}</span>
+                    <span className="text-slate-600 text-[10px] font-mono">{item.publishedAt}</span>
+                  </div>
+                  <p className="text-sm text-slate-300 group-hover:text-white leading-relaxed font-medium transition-colors">
+                    {item.title}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
         {/* 오른쪽: 지도 영역 */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl h-[600px] relative">
+        <div className="lg:col-span-2 h-[700px] bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 relative shadow-[0_0_60px_rgba(0,0,0,0.8)]">
           <Map
-            initialViewState={{ longitude: 35.0, latitude: 35.0, zoom: 2.5 }}
-            style={{ width: '100%', height: '100%' }}
-            mapStyle="mapbox://styles/mapbox/dark-v11" 
+            initialViewState={{ longitude: 48.0, latitude: 30.0, zoom: 3.2 }}
+            mapStyle="mapbox://styles/mapbox/dark-v11"
             mapboxAccessToken={MAPBOX_TOKEN}
           >
             <NavigationControl position="top-right" />
             
-            {/* 📍 이란-이스라엘 마커 클릭 시 데이터 변경 */}
+            {/* 🔴 중동 마커 (바그다드/이란/이스라엘 중심부) */}
             <Marker 
-              longitude={35.21} latitude={31.76} anchor="bottom"
+              longitude={44.36} latitude={33.31}
               onClick={(e) => {
                 e.originalEvent.stopPropagation();
-                setSelectedWar(WAR_DATA.middleEast);
+                setActiveTab('Middle East');
+                fetchWarNews(true); // 전략적 키워드 필터 활성화
               }}
             >
-              <div className="cursor-pointer group">
-                <div className="w-6 h-6 bg-red-600 rounded-full border-2 border-white animate-pulse shadow-[0_0_20px_rgba(220,38,38,1)]"></div>
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-slate-700">
-                  중동 분쟁 지역 (클릭)
+              <div className="cursor-pointer group relative">
+                <div className="w-12 h-12 bg-red-600/20 rounded-full flex items-center justify-center animate-ping absolute -top-2 -left-2"></div>
+                <div className="w-8 h-8 bg-red-600 rounded-full border-4 border-slate-950 shadow-[0_0_30px_red] flex items-center justify-center text-[10px] font-black text-white relative transition-transform group-hover:scale-125">
+                  WAR
+                </div>
+                <div className="absolute top-10 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] font-bold px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
+                  Hormuz & Middle East Focus
                 </div>
               </div>
             </Marker>
@@ -106,16 +131,5 @@ export default function Home() {
         </div>
       </div>
     </main>
-  );
-}
-
-// 컴포넌트들
-function StatCard({ title, value, sub, color }: { title: string; value: string; sub: string; color: string; }) {
-  return (
-    <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg ring-1 ring-slate-800">
-      <h3 className="text-slate-400 text-sm font-medium">{title}</h3>
-      <p className={`text-2xl font-bold mt-1 ${color}`}>{value}</p>
-      <p className="text-xs text-slate-500 mt-2">{sub}</p>
-    </div>
   );
 }
