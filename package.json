@@ -8,12 +8,13 @@
     "start": "next start",
     "lint": "eslint"
   },
- "dependencies": {
+  "dependencies": {
+    "geist": "^1.7.0",
     "mapbox-gl": "^3.2.0",
-    "react-map-gl": "^7.1.7",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-map-gl": "^7.1.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
