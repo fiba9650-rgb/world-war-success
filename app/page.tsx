@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Map, { Marker, NavigationControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+// 💡 본인의 정보를 여기에 정확히 입력하세요!
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
 const GNEWS_API_KEY = 'ba2846376d87ba71fd85e5d1c422c3c8'; 
 
@@ -37,7 +38,7 @@ export default function Home() {
     if (type === 'MIDDLE_EAST') {
       // 📍 하메나이 암살 사건 (2026-02-28) 기준
       setStats({
-        name: "중동 전쟁 (하메나이 암살 작전 이후)",
+        name: "중동 전쟁 (이란-이스라엘)",
         days: getDiffDays("2026-02-28").toString(),
         deaths: { val: "3,200+", src: "UN OCHA (유엔 인도주의업무조정국)" },
         damage: { val: "$120B", src: "World Bank (세계은행) 추산" },
@@ -80,15 +81,14 @@ export default function Home() {
         )}
       </div>
 
-      {/* 📊 상단 지표 영역 (전쟁명 리스트 포함) */}
+      {/* 📊 상단 지표 영역 */}
       <div className="max-w-7xl mx-auto min-h-[180px] mb-10 transition-all">
         {!stats ? (
           <div className="w-full bg-slate-900/30 border-2 border-dashed border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center">
-            <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] mb-6 animate-pulse">Select Active Conflict to Receive Intelligence</p>
+            <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] mb-6 animate-pulse">Select Active Conflict</p>
             <div className="flex flex-wrap justify-center gap-4">
               <ConflictButton name="중동 전쟁 (이란-이스라엘)" onClick={() => loadConflictData('MIDDLE_EAST')} />
               <ConflictButton name="러시아-우크라이나 전쟁" onClick={() => loadConflictData('RUSSIA_UKRAINE')} />
-              <button className="px-6 py-3 bg-slate-800/20 border border-slate-700 rounded-xl text-[11px] font-bold text-slate-600 cursor-not-allowed uppercase italic">More Conflicts Coming Soon...</button>
             </div>
           </div>
         ) : (
@@ -112,7 +112,7 @@ export default function Home() {
           {!stats && <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[1px] z-10 flex items-center justify-center text-[10px] text-slate-600 font-bold uppercase tracking-widest">Feed Encrypted</div>}
           <h2 className="text-[10px] font-black mb-6 border-l-4 border-red-600 pl-3 uppercase tracking-widest text-slate-400">Live Intel Feed</h2>
           <div className="space-y-4 overflow-y-auto flex-1 pr-2 scrollbar-hide">
-            {news.map((item: any, idx) => (
+            {news.map((item, idx) => (
               <div key={idx} className="border-b border-slate-800/50 pb-4 last:border-0 cursor-pointer hover:bg-slate-800/40 p-2 rounded transition-all" onClick={() => window.open(item.url)}>
                 <span className="text-red-600 text-[9px] font-black uppercase tracking-tighter bg-red-950/20 px-2 py-0.5 rounded">{item.source?.name}</span>
                 <p className="text-sm text-slate-300 font-medium leading-snug mt-2">{item.title}</p>
@@ -129,18 +129,22 @@ export default function Home() {
             mapboxAccessToken={MAPBOX_TOKEN}
           >
             <NavigationControl position="top-right" />
-            {/* 중동 전쟁 마커 */}
+            
+            {/* 🔴 중동 전쟁 마커 (빨간 점) */}
             <Marker longitude={56.3} latitude={26.6} onClick={() => loadConflictData('MIDDLE_EAST')}>
               <div className="cursor-pointer group relative">
-                <div className="w-14 h-14 bg-red-600/10 rounded-full animate-ping absolute -top-3 -left-3"></div>
-                <div className="w-8 h-8 bg-red-600 rounded-full border-2 border-white shadow-[0_0_30px_red] flex items-center justify-center text-[10px] font-black text-white relative">WAR</div>
+                <div className="w-14 h-14 bg-red-600/20 rounded-full animate-ping absolute -top-3 -left-3"></div>
+                {/* 📍 'WAR' 글자 대신 빨간색 고정 원으로 변경 */}
+                <div className="w-8 h-8 bg-red-600 rounded-full border-2 border-white shadow-[0_0_20px_red] relative"></div>
               </div>
             </Marker>
-            {/* 러우 전쟁 마커 */}
+            
+            {/* 🔵 러우 전쟁 마커 (파란 점) */}
             <Marker longitude={37.6} latitude={48.3} onClick={() => loadConflictData('RUSSIA_UKRAINE')}>
               <div className="cursor-pointer group relative">
-                <div className="w-14 h-14 bg-blue-600/10 rounded-full animate-ping absolute -top-3 -left-3"></div>
-                <div className="w-8 h-8 bg-blue-600 rounded-full border-2 border-white shadow-[0_0_30px_blue] flex items-center justify-center text-[10px] font-black text-white relative uppercase">WAR</div>
+                <div className="w-14 h-14 bg-blue-600/20 rounded-full animate-ping absolute -top-3 -left-3"></div>
+                {/* 📍 'WAR' 글자 대신 파란색 고정 원으로 변경 */}
+                <div className="w-8 h-8 bg-blue-600 rounded-full border-2 border-white shadow-[0_0_20px_blue] relative uppercase"></div>
               </div>
             </Marker>
           </Map>
