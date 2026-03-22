@@ -9,7 +9,7 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzh
 const GNEWS_API_KEY = 'ba2846376d87ba71fd85e5d1c422c3c8'; 
 
 export default function Home() {
-  const [news, setNews] = useState([]);
+  const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('Global');
   
