@@ -272,6 +272,7 @@ const handleMapLoad = (e: any) => {
                 minZoom={4.5}
               >
                 <NavigationControl position="top-right" />
+              
                 {/* 🗺️ 삼국지 지역 구분 영토 (투명도를 올려서 확 보이게 수정!) */}
 <Source id="han-provinces" type="geojson" data={HAN_PROVINCES}>
                   <Layer id="province-fill" type="fill" paint={{ 
@@ -336,6 +337,28 @@ const handleMapLoad = (e: any) => {
                   </Popup>
                 )}
               </Map>
+              {/* 🏙️ 여기에 사이드바가 들어갑니다! */}
+              <div className="absolute top-6 right-16 bottom-6 w-48 bg-white/90 backdrop-blur-md rounded-[30px] shadow-2xl border border-slate-200 z-10 overflow-hidden flex flex-col">
+                <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest text-center">주요 거점 목록</p>
+                </div>
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
+                  {HAN_PROVINCES.features.map((region: any, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        // 첫 번째 좌표를 기준으로 이동
+                        const coords = region.geometry.coordinates[0][0]; 
+                        mapRef.current?.flyTo({ center: [coords[0], coords[1]], zoom: 6.5, duration: 2000 });
+                      }}
+                      className="w-full flex items-center gap-2 p-3 rounded-2xl hover:bg-slate-100 transition-all text-left group"
+                    >
+                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: region.properties.color }}></div>
+                      <span className="text-xs font-bold text-slate-700 group-hover:text-slate-900">{region.properties.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 {/* 🗺️ 지역 색상 범례 (Legend) */}
 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-5 py-3 rounded-full shadow-md border border-slate-200 z-10 pointer-events-none flex items-center gap-4">
