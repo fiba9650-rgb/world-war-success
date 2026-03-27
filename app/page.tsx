@@ -116,38 +116,32 @@ const ANCIENT_CITIES: any = {
     { type: 'Feature', geometry: { type: 'Point', coordinates: [98.50, 39.73] }, properties: { name: "서량 (西涼)" } }
   ]
 };
-// 🗺️ 삼국지 주요 지역 구분선 및 지리적 구획 데이터
+// 🗺️ 삼국지 주요 지역 구분선 (색상 뚜렷한 파스텔톤 적용)
 const HAN_PROVINCES: any = {
   type: 'FeatureCollection',
   features: [
     {
-      type: 'Feature',
-      properties: { name: "익 주", color: "#f59e0b" }, // 황색
+      type: 'Feature', properties: { name: "익 주", color: "#fbd38d" }, // 뚜렷한 황색
       geometry: { type: 'Polygon', coordinates: [[[101.0, 33.5], [107.5, 34.0], [109.5, 30.0], [105.0, 25.0], [98.0, 25.0], [101.0, 33.5]]] }
     },
     {
-      type: 'Feature',
-      properties: { name: "형 주", color: "#10b981" }, // 녹색
+      type: 'Feature', properties: { name: "형 주", color: "#6ee7b7" }, // 뚜렷한 녹색
       geometry: { type: 'Polygon', coordinates: [[[109.5, 33.0], [114.5, 33.0], [116.0, 29.0], [113.0, 25.0], [109.0, 25.0], [109.5, 33.0]]] }
     },
     {
-      type: 'Feature',
-      properties: { name: "양 주", color: "#ef4444" }, // 적색
+      type: 'Feature', properties: { name: "양 주", color: "#fca5a5" }, // 뚜렷한 적색
       geometry: { type: 'Polygon', coordinates: [[[114.5, 33.0], [122.0, 34.0], [122.0, 26.0], [116.0, 26.0], [113.0, 29.0], [114.5, 33.0]]] }
     },
     {
-      type: 'Feature',
-      properties: { name: "중 원", color: "#3b82f6" }, // 청색
+      type: 'Feature', properties: { name: "중 원", color: "#93c5fd" }, // 뚜렷한 청색
       geometry: { type: 'Polygon', coordinates: [[[110.0, 38.0], [118.0, 38.0], [118.0, 34.0], [114.5, 33.0], [109.5, 33.0], [107.5, 34.0], [110.0, 38.0]]] }
     },
     {
-      type: 'Feature',
-      properties: { name: "하 북", color: "#a855f7" }, // 보라색
+      type: 'Feature', properties: { name: "하 북", color: "#d8b4fe" }, // 뚜렷한 보라색
       geometry: { type: 'Polygon', coordinates: [[[110.0, 42.0], [122.0, 42.0], [118.0, 38.0], [110.0, 38.0], [110.0, 42.0]]] }
     },
     {
-      type: 'Feature',
-      properties: { name: "서 북", color: "#f97316" }, // 주황색
+      type: 'Feature', properties: { name: "서 북", color: "#fdba74" }, // 뚜렷한 살구색
       geometry: { type: 'Polygon', coordinates: [[[95.0, 40.0], [110.0, 40.0], [107.5, 34.0], [101.0, 33.5], [95.0, 35.0], [95.0, 40.0]]] }
     }
   ]
@@ -252,7 +246,44 @@ const handleMapLoad = (e: any) => {
                 minZoom={4.5}
               >
                 <NavigationControl position="top-right" />
-
+                {/* 🗺️ 삼국지 지역 구분 영토 (투명도를 올려서 확 보이게 수정!) */}
+                <Source id="han-provinces" type="geojson" data={HAN_PROVINCES}>
+                  {/* 1. 영토 배경색칠 (눈에 확 띄게 투명도 0.35로 올림) */}
+                  <Layer
+                    id="province-fill"
+                    type="fill"
+                    paint={{
+                      'fill-color': ['get', 'color'],
+                      'fill-opacity': 0.35 
+                    }}
+                  />
+                  {/* 2. 영토 경계선 */}
+                  <Layer
+                    id="province-line"
+                    type="line"
+                    paint={{
+                      'line-color': ['get', 'color'],
+                      'line-width': 3,
+                      'line-opacity': 0.8
+                    }}
+                  />
+                  {/* 3. 영토 한가운데 이름 표시 */}
+                  <Layer
+                    id="province-label"
+                    type="symbol"
+                    layout={{
+                      'text-field': ['get', 'name'],
+                      'text-font': ['Arial Unicode MS Regular'],
+                      'text-size': 24, 
+                      'text-anchor': 'center'
+                    }}
+                    paint={{
+                      'text-color': '#1e293b', 
+                      'text-halo-color': '#ffffff',
+                      'text-halo-width': 2
+                    }}
+                  />
+                </Source>
                 {/* 🏷️ 옛 지명 띄우기 (이름 충돌 방지를 위해 id 변경) */}
                 <Source id="ancient-cities" type="geojson" data={ANCIENT_CITIES}>
                   <Layer
