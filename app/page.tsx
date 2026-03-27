@@ -135,9 +135,9 @@ export default function Home() {
 const handleMapLoad = (e: any) => {
     const map = e.target;
     map.getStyle().layers.forEach((layer: any) => {
-      // 💡 현대 지명, 복잡한 도로, 국경선 등을 전부 투명하게 지워서 백지장처럼 깔끔하게 만듭니다.
+      // 💡 현대 지명, 도로, 국경선은 지우되, 우리가 만든 옛 지명('ancient')은 지우지 않고 살려둡니다!
       if (
-        layer.id.includes('label') || 
+        (layer.id.includes('label') && !layer.id.includes('ancient')) || 
         layer.id.includes('road') || 
         layer.id.includes('boundary') || 
         layer.id.includes('transit')
@@ -209,42 +209,29 @@ const handleMapLoad = (e: any) => {
                 ref={mapRef}
                 initialViewState={{ ...LIUBEI_CHRONICLE.center, zoom: 4.8 }}
                 style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/light-v11" // 💡 산맥을 없애고 가장 깔끔한 도화지 스타일로 복구
+                mapStyle="mapbox://styles/mapbox/light-v11"
                 mapboxAccessToken="pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q"
                 onLoad={handleMapLoad}
-                maxBounds={[[95.0, 18.0], [123.0, 43.0]]} // 🔒 한반도와 몽골을 자르고 딱 '삼국지 대륙'에만 카메라를 가둡니다.
+                maxBounds={[[95.0, 18.0], [123.0, 43.0]]}
                 minZoom={4.5}
               >
                 <NavigationControl position="top-right" />
 
-                {/* 👣 유비의 발자취 (이동 궤적 점선) */}
-                <Source id="liubei-path" type="geojson" data={LIUBEI_PATH}>
-                  <Layer
-                    id="liubei-path-line"
-                    type="line"
-                    paint={{
-                      'line-color': '#f59e0b', // 황색 점선
-                      'line-width': 3,
-                      'line-dasharray': [2, 2] // 점선 효과
-                    }}
-                  />
-                </Source>
-
-                {/* 🏷️ 옛 지명 띄우기 (폰트 에러 수정 완료) */}
+                {/* 🏷️ 옛 지명 띄우기 (이름 충돌 방지를 위해 id 변경) */}
                 <Source id="ancient-cities" type="geojson" data={ANCIENT_CITIES}>
                   <Layer
-                    id="ancient-cities-label"
+                    id="ancient-cities-text"
                     type="symbol"
                     layout={{
                       'text-field': ['get', 'name'],
-                      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Regular'], // 💡 Mapbox 기본 안전 폰트로 교체
-                      'text-size': 13,
-                      'text-anchor': 'top',
-                      'text-offset': [0, 1]
+                      'text-font': ['Arial Unicode MS Regular'], // 💡 전 세계 언어를 가장 안정적으로 지원하는 폰트
+                      'text-size': 14,
+                      'text-anchor': 'bottom',
+                      'text-offset': [0, -0.5]
                     }}
                     paint={{
-                      'text-color': '#64748b', // 세련된 슬레이트 그레이
-                      'text-halo-color': '#ffffff', // 글씨가 잘 보이도록 흰색 테두리
+                      'text-color': '#5c2b07', // 고풍스러운 갈색
+                      'text-halo-color': '#ffffff',
                       'text-halo-width': 2
                     }}
                   />
