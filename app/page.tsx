@@ -327,24 +327,17 @@ const handleMapLoad = (e: any) => {
               </Map>
             </div>
 {/* 🗺️ 지역 색상 범례 (Legend) */}
-              <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 rounded-2xl shadow-xl border border-slate-200 z-10 pointer-events-none">
-                <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-200 pb-2">
-                  후한 13주 주요 지역도
-                </p>
-                <div className="flex flex-col gap-3">
-                  {HAN_PROVINCES.features.map((region: any, idx: number) => (
-                    <div key={idx} className="flex items-center gap-3">
-                      <div 
-                        className="w-3.5 h-3.5 rounded-full shadow-sm ring-2 ring-white" 
-                        style={{ backgroundColor: region.properties.color }}
-                      ></div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-800 leading-none mb-1">{region.properties.name}</p>
-                        <p className="text-[10px] text-slate-500 font-medium leading-none">{region.properties.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+<div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-5 py-3 rounded-full shadow-md border border-slate-200 z-10 pointer-events-none flex items-center gap-4">
+                {HAN_PROVINCES.features.map((region: any, idx: number) => (
+                  <div key={idx} className="flex items-center gap-1.5 shrink-0">
+                    <div 
+                      className="w-3 h-3 rounded-full shadow-inner" 
+                      style={{ backgroundColor: region.properties.color }}
+                    ></div>
+                    <span className="text-xs font-black text-slate-700">{region.properties.name}</span>
+                  </div>
+                ))}
+              </div>
               </div>
             {/* 📊 2. 인물 스탯 대시보드 영역 */}
             <div className="bg-white border border-slate-200 p-6 rounded-[30px] shadow-sm flex-shrink-0 transition-all duration-300">
