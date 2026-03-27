@@ -5,7 +5,7 @@ import Map, { Marker, Popup, NavigationControl, MapRef } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // 🔑 Mapbox 토큰 (재준님의 실제 토큰으로 교체하세요)
-const MAPBOX_TOKEN = "pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA"; // 임시 토큰
+const MAPBOX_TOKEN = "pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q"; // 임시 토큰
 
 // 📚 인물 일대기 데이터 (촉한 소열제 유비)
 const LIUBEI_CHRONICLE = {
