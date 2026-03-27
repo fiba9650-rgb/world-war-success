@@ -7,139 +7,59 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q';
 
 // 📚 한국어 역사 연표 (사건별 상세 참전국, 병력, 전사, 부상 데이터 적용)
-const WW1_CHRONICLE: any = {
-name: "제1차 세계 대전 (The Great War)",
-summary: "유럽 제국주의 열강들이 협상국(청색)과 동맹국(적색)으로 양분되어 전 세계에서 벌인 사상 초유의 총력전입니다.",
-center: { lon: 15.0, lat: 48.0, zoom: 4.2 },
-events: [
-{
-date: "1914.06.28", title: "사라예보 암살 사건", location: "사라예보", lat: 43.8563, lon: 18.4131, year: "1914",
-desc: "세르비아 민족주의자가 오스트리아 황태자를 암살하며 전쟁의 도화선에 불을 붙였습니다.", impact: "전쟁 발발",
-stats: {
-allied: [{ name: "세르비아 (흑수단)", forces: "암살조 7명", dead: "-", wounded: "-" }],
-central: [{ name: "오스트리아-헝가리", forces: "황태자 부부", dead: "2명", wounded: "-" }]
-}
-},
-{
-date: "1914.08.04", title: "벨기에 침공", location: "벨기에 리에주", lat: 50.64, lon: 5.57, year: "1914",
-desc: "독일군이 중립국 벨기에를 침공하며 프랑스로 진격, 영국의 참전을 끌어냈습니다.", impact: "전선 확대",
-stats: {
-allied: [{ name: "벨기에", forces: "약 200,000명", dead: "약 30,000명", wounded: "약 50,000명" }],
-central: [{ name: "독일 제국", forces: "약 750,000명", dead: "약 15,000명", wounded: "약 40,000명" }]
-}
-},
-{
-date: "1914.09.06", title: "마른 전투", location: "프랑스 마른강", lat: 48.9, lon: 3.1, year: "1914",
-desc: "프랑스·영국 연합군이 독일군의 파리 진격을 저지하며, 길고 참혹한 참호전이 시작되었습니다.", impact: "참호전 돌입",
-stats: {
-allied: [
-{ name: "프랑스", forces: "약 1,080,000명", dead: "약 80,000명", wounded: "약 170,000명" },
-{ name: "영국", forces: "약 70,000명", dead: "약 1,700명", wounded: "약 3,000명" }
-],
-central: [{ name: "독일 제국", forces: "약 900,000명", dead: "약 67,000명", wounded: "약 150,000명" }]
-}
-},
-{
-date: "1916.02.21", title: "베르됭 전투", location: "프랑스 베르됭", lat: 49.16, lon: 5.38, year: "1916",
-desc: "양측 합산 70만 명 이상의 사상자를 낸 대전 중 가장 끔찍한 소모전입니다.", impact: "최대 격전",
-stats: {
-allied: [{ name: "프랑스", forces: "약 1,140,000명", dead: "162,308명", wounded: "216,000명" }],
-central: [{ name: "독일 제국", forces: "약 1,250,000명", dead: "143,000명", wounded: "196,000명" }]
-}
-},
-{
-date: "1916.07.01", title: "솜 전투", location: "프랑스 솜강", lat: 49.9, lon: 2.7, year: "1916",
-desc: "탱크가 처음 등장한 연합군의 대규모 공세로, 역사상 가장 처참한 교전 중 하나입니다.", impact: "소모전 격화",
-stats: {
-allied: [
-{ name: "영국", forces: "약 1,500,000명", dead: "약 95,000명", wounded: "약 324,000명" },
-{ name: "프랑스", forces: "약 500,000명", dead: "약 50,000명", wounded: "약 150,000명" }
-],
-central: [{ name: "독일 제국", forces: "약 1,500,000명", dead: "약 164,000명", wounded: "약 250,000명" }]
-}
-},
-{
-date: "1917.04.06", title: "미국의 참전", location: "미국 워싱턴 D.C.", lat: 38.9, lon: -77.0, year: "1917",
-desc: "독일의 무제한 잠수함 작전에 분노한 미국이 참전하며 전세의 균형이 무너졌습니다.", impact: "전세 역전",
-stats: {
-allied: [{ name: "미국 (누적)", forces: "약 4,355,000명", dead: "116,000명", wounded: "204,000명" }],
-central: [{ name: "독일 제국 (잠수함대)", forces: "U-boat 300여척", dead: "약 5,000명", wounded: "-" }]
-}
-},
-{
-date: "1918.03.03", title: "브레스트-리토프스크 조약", location: "벨라루스 브레스트", lat: 52.09, lon: 23.68, year: "1918",
-desc: "러시아 혁명 정부가 독일과 단독 강화를 맺고 이탈하여 동부 전선이 종결되었습니다.", impact: "러시아 이탈",
-stats: {
-allied: [{ name: "러시아 제국 (전체 피해)", forces: "약 12,000,000명", dead: "약 1,700,000명", wounded: "약 4,950,000명" }],
-central: [
-{ name: "독일 제국", forces: "동부전선 승리", dead: "-", wounded: "-" },
-{ name: "오스트리아-헝가리", forces: "동부전선 승리", dead: "-", wounded: "-" }
-]
-}
-},
-{
-date: "1918.11.11", title: "컴피뉴 휴전 협정", location: "프랑스 콩피에뉴", lat: 49.4, lon: 2.8, year: "1919",
-desc: "독일의 항복으로 전쟁이 종결되고 4대 제국이 붕괴하며 유럽의 지도가 다시 그려졌습니다.", impact: "전쟁 종결",
-stats: {
-allied: [
-{ name: "프랑스 (전체)", forces: "8,410,000명", dead: "1,357,000명", wounded: "4,266,000명" },
-{ name: "대영제국 (전체)", forces: "8,900,000명", dead: "908,000명", wounded: "2,090,000명" }
-],
-central: [
-{ name: "독일 제국 (전체)", forces: "11,000,000명", dead: "1,773,000명", wounded: "4,216,000명" },
-{ name: "오스트리아-헝가리", forces: "7,800,000명", dead: "1,200,000명", wounded: "3,620,000명" }
-]
-}
-}
-],
-outcome: { victors: ["영국", "프랑스", "미국", "이탈리아", "일본"], losers: ["독일 제국", "오스트리아-헝가리", "오스만 제국", "불가리아"] }
+// 📚 인물 일대기 데이터 (촉한 소열제 유비 편)
+const LIUBEI_CHRONICLE: any = {
+  name: "한 소열제 유비 (劉備)",
+  summary: "짚신을 팔던 몰락한 황손에서 촉한의 황제까지, 난세를 헤쳐나간 인의(仁義)의 영웅.",
+  center: { lon: 112.0, lat: 33.0, zoom: 4.5 }, // 중국 대륙 중심
+  events: [
+    { 
+      date: "184년", age: 24, title: "황건적의 난과 도원결의", location: "탁군 탁현", lat: 39.48, lon: 115.98, year: "184", 
+      desc: "어머니와 짚신을 팔던 유비는 관우, 장비와 의형제를 맺고 의병을 일으켜 황건적을 토벌합니다.", 
+      idiom: "도원결의(桃園結義)", generals: ["관우", "장비", "간옹"], army: "의병 약 500명" 
+    },
+    { 
+      date: "194년", age: 34, title: "서주 입성 및 도겸의 양위", location: "서주 하비", lat: 34.33, lon: 118.01, year: "194", 
+      desc: "조조의 서주 대학살을 막기 위해 구원군으로 참전하고, 도겸의 유지를 받아 서주 자사가 됩니다.", 
+      idiom: "-", generals: ["관우", "장비", "미축", "손건"], army: "약 10,000명" 
+    },
+    { 
+      date: "201년", age: 41, title: "신야 안착과 비육지탄", location: "형주 신야", lat: 32.52, lon: 112.35, year: "201", 
+      desc: "조조에게 패배한 후 유표에게 의탁합니다. 오랜 기간 말을 타지 않아 허벅지에 살이 찐 것을 한탄합니다.", 
+      idiom: "비육지탄(髀肉之嘆)", generals: ["관우", "장비", "조운"], army: "수천 명 (객장)" 
+    },
+    { 
+      date: "207년", age: 47, title: "삼고초려와 수어지교", location: "융중", lat: 32.01, lon: 112.14, year: "207", 
+      desc: "제갈량의 초가집을 세 번 찾아가 천하삼분지계를 듣고 그를 군사로 맞이합니다.", 
+      idiom: "삼고초려(三顧草廬), 수어지교(水魚之交)", generals: ["제갈량", "관우", "장비", "조운"], army: "약 10,000명" 
+    },
+    { 
+      date: "208년", age: 48, title: "적벽대전", location: "형주 적벽", lat: 29.88, lon: 113.62, year: "208", 
+      desc: "손권과 연합하여 조조의 대군을 화공으로 격파하고, 마침내 형주 남부 4군을 차지하여 독자적인 세력을 구축합니다.", 
+      idiom: "-", generals: ["제갈량", "관우", "장비", "조운", "황충"], army: "약 20,000명 (손권군 3만 별도)" 
+    },
+    { 
+      date: "214년", age: 54, title: "익주 평정과 촉한의 기반", location: "익주 성도", lat: 30.66, lon: 104.06, year: "214", 
+      desc: "유장의 항복을 받아내고 익주를 차지하며 제갈량이 구상한 천하삼분지계를 완성합니다.", 
+      idiom: "-", generals: ["제갈량", "관우", "장비", "조운", "황충", "마초", "법정"], army: "약 100,000명 이상" 
+    },
+    { 
+      date: "219년", age: 59, title: "한중왕 즉위", location: "한중", lat: 33.07, lon: 107.02, year: "219", 
+      desc: "정군산에서 하후연을 베고 한중 공방전에서 조조를 물리친 후, 마침내 한중왕(漢中王)에 오릅니다.", 
+      idiom: "-", generals: ["제갈량", "관우", "장비", "조운", "황충", "마초", "위연"], army: "약 150,000명" 
+    },
+    { 
+      date: "222년", age: 62, title: "이릉대전 대패", location: "형주 이릉", lat: 30.75, lon: 111.28, year: "222", 
+      desc: "관우와 장비의 복수를 위해 오나라를 침공했으나, 육손의 화공에 대패하며 촉한의 정예병을 잃습니다.", 
+      idiom: "-", generals: ["황권", "풍습", "장남", "조운(강주 수비)"], army: "약 40,000 ~ 80,000명" 
+    },
+    { 
+      date: "223년", age: 63, title: "백제성 탁고 (붕어)", location: "백제성", lat: 31.04, lon: 109.56, year: "223", 
+      desc: "병세가 악화된 유비는 제갈량에게 후사를 부탁(탁고)하고 63세의 나이로 파란만장한 생을 마감합니다.", 
+      idiom: "백제탁고(白帝託孤)", generals: ["제갈량", "이엄", "조운"], army: "촉한 정규군 편제 유지" 
+    }
+  ]
 };
-
-export default function Home() {
-  const mapRef = useRef<MapRef>(null);
-  const [selectedEvent, setSelectedEvent] = useState<any>(WW1_CHRONICLE.events[0]);
-
-  // 💡 선택된 연도에 따라 국가들의 소속(색상)을 실시간으로 바꿔주는 함수
-  // 💡 국가 이름 매칭의 '경우의 수'를 모두 포함한 궁극의 로직
-  const getAlliancesByYear = (year: string) => {
-    // 영국의 정식 명칭, 제국 명칭 등 지도 제작자가 썼을 법한 모든 이름을 다 넣습니다.
-    const entente = [
-      'United Kingdom', 'Great Britain', 'United Kingdom of Great Britain and Ireland', 
-      'France', 'Italy', 'Serbia', 'Belgium', 'Japan', 'Montenegro', 'Greece', 'Romania'
-    ];
-    const central = [
-      'Germany', 'German Empire', 
-      'Austria-Hungary', 'Austro-Hungarian Empire', 
-      'Ottoman Empire', 'Turkey', 'Bulgaria'
-    ];
-    const collapsed = ['DUMMY_COUNTRY']; // 에러 방지용
-
-    // 1918년 이전: 러시아 제국 참전
-    if (year < "1918") entente.push('Russia', 'Russian Empire');
-    // 1917년 이후: 미국 참전
-    if (year >= "1917") entente.push('United States', 'United States of America');
-    
-    // 1919년 (종전): 동맹국 전체와 러시아 제국의 붕괴 (잿빛 처리)
-    if (year === "1919") {
-      collapsed.push(...central, 'Russia', 'Russian Empire');
-      central.length = 0;
-      central.push('DUMMY_COUNTRY');
-    }
-
-    return { entente, central, collapsed };
-  };
-
-  const handleEventClick = (event: any) => {
-    setSelectedEvent(event);
-    if (mapRef.current) {
-      mapRef.current.flyTo({
-        center: [event.lon, event.lat],
-        zoom: event.title.includes('미국') ? 3 : 4.5, // 미국 클릭 시 넓게 보여줌
-        essential: true,
-        duration: 2500
-      });
-    }
-  };
 // 👇 --- [여기서부터 복사해서 붙여넣으세요] --- 👇
   const handleMapLoad = (e: any) => {
     const map = e.target;
@@ -213,7 +133,6 @@ export default function Home() {
 
                 {/* 💡 정밀 국경선 데이터를 항상 띄우고, 색상만 동적으로 바꿉니다. */}
                 {selectedEvent && (
-                  <Source id="historical-borders" type="geojson" data="https://raw.githubusercontent.com/aourednik/historical-basemaps/master/geojson/world_1914.geojson">
                     
                     <Layer
                       id="alliance-fill"
@@ -283,63 +202,36 @@ export default function Home() {
                 )}
               </div>
             </div>
-{/* 📊 사건별 상세 참전국 및 병력 대시보드 (클릭 시 실시간 변경) */}
+{/* 📊 인물 스탯 대시보드 (클릭 시 실시간 변경) */}
             <div className="bg-white border border-slate-200 p-6 rounded-[30px] shadow-sm flex-shrink-0 transition-all duration-300">
-              <p className="text-slate-800 text-[13px] font-black uppercase tracking-widest mb-4 border-b border-slate-100 pb-2">
-                ⚔️ {selectedEvent?.title} <span className="text-slate-400 font-medium">| 참전국 및 사상자 통계</span>
-              </p>
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                <p className="text-slate-800 text-[14px] font-black tracking-widest">
+                  🐉 {selectedEvent?.title} <span className="text-slate-400 font-medium ml-2">| {selectedEvent?.date} (당시 {selectedEvent?.age}세)</span>
+                </p>
+                {selectedEvent?.idiom !== "-" && (
+                  <span className="px-3 py-1 bg-amber-50 text-amber-700 font-bold text-xs rounded-full border border-amber-200 shadow-sm">
+                    {selectedEvent?.idiom}
+                  </span>
+                )}
+              </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* 🔵 협상국 전력 */}
-                <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
-                  <p className="text-blue-600 text-[11px] font-black uppercase tracking-widest mb-3 border-b border-blue-100 pb-2">협상국 (Allied)</p>
-                  <div className="flex flex-col gap-2">
-                    {selectedEvent?.stats?.allied?.map((nation: any, i: number) => (
-                      <div key={i} className="bg-white p-3 rounded-xl border border-blue-50 shadow-sm">
-                        <p className="font-bold text-sm text-blue-900 mb-2">{nation.name}</p>
-                        <div className="grid grid-cols-3 gap-2 text-[11px] text-center">
-                          <div className="bg-slate-50 rounded p-1.5 border border-slate-100">
-                            <span className="block text-slate-400 text-[9px] mb-0.5">투입 병력</span>
-                            <span className="font-bold text-slate-700">{nation.forces}</span>
-                          </div>
-                          <div className="bg-red-50 rounded p-1.5 border border-red-100">
-                            <span className="block text-red-400 text-[9px] mb-0.5">전사</span>
-                            <span className="font-bold text-red-700">{nation.dead}</span>
-                          </div>
-                          <div className="bg-orange-50 rounded p-1.5 border border-orange-100">
-                            <span className="block text-orange-400 text-[9px] mb-0.5">부상</span>
-                            <span className="font-bold text-orange-700">{nation.wounded}</span>
-                          </div>
-                        </div>
-                      </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* 👥 휘하 주요 장수 */}
+                <div className="md:col-span-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <p className="text-slate-500 text-[11px] font-black uppercase tracking-widest mb-3">휘하 주요 무장 및 책사</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedEvent?.generals?.map((general: string, i: number) => (
+                      <span key={i} className="px-3 py-1.5 bg-white text-slate-800 rounded-lg text-sm font-bold border border-slate-200 shadow-sm">
+                        {general}
+                      </span>
                     ))}
                   </div>
                 </div>
                 
-                {/* 🔴 동맹국 전력 */}
-                <div className="bg-red-50/50 p-4 rounded-2xl border border-red-100">
-                  <p className="text-red-600 text-[11px] font-black uppercase tracking-widest mb-3 border-b border-red-100 pb-2">동맹국 (Central)</p>
-                  <div className="flex flex-col gap-2">
-                    {selectedEvent?.stats?.central?.map((nation: any, i: number) => (
-                      <div key={i} className="bg-white p-3 rounded-xl border border-red-50 shadow-sm">
-                        <p className="font-bold text-sm text-red-900 mb-2">{nation.name}</p>
-                        <div className="grid grid-cols-3 gap-2 text-[11px] text-center">
-                          <div className="bg-slate-50 rounded p-1.5 border border-slate-100">
-                            <span className="block text-slate-400 text-[9px] mb-0.5">투입 병력</span>
-                            <span className="font-bold text-slate-700">{nation.forces}</span>
-                          </div>
-                          <div className="bg-red-50 rounded p-1.5 border border-red-100">
-                            <span className="block text-red-400 text-[9px] mb-0.5">전사</span>
-                            <span className="font-bold text-red-700">{nation.dead}</span>
-                          </div>
-                          <div className="bg-orange-50 rounded p-1.5 border border-orange-100">
-                            <span className="block text-orange-400 text-[9px] mb-0.5">부상</span>
-                            <span className="font-bold text-orange-700">{nation.wounded}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {/* ⚔️ 동원 병력 */}
+                <div className="bg-red-50/50 p-4 rounded-2xl border border-red-100 flex flex-col justify-center">
+                  <p className="text-red-600 text-[11px] font-black uppercase tracking-widest mb-2">당시 세력 규모</p>
+                  <p className="text-red-900 font-black text-lg">{selectedEvent?.army}</p>
                 </div>
               </div>
             </div>
