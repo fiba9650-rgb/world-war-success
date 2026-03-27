@@ -132,14 +132,29 @@ export default function Home() {
     }
   };
 
- const handleMapLoad = (e: any) => {
+const handleMapLoad = (e: any) => {
     const map = e.target;
     map.getStyle().layers.forEach((layer: any) => {
-      // 현대 지명, 도로명, 국가 경계선 숨기기 (몰입감 업!)
-      if (layer.id.includes('label') || layer.id.includes('boundary')) {
+      // 💡 현대 지명, 복잡한 도로, 국경선 등을 전부 투명하게 지워서 백지장처럼 깔끔하게 만듭니다.
+      if (
+        layer.id.includes('label') || 
+        layer.id.includes('road') || 
+        layer.id.includes('boundary') || 
+        layer.id.includes('transit')
+      ) {
         map.setLayoutProperty(layer.id, 'visibility', 'none');
       }
     });
+  };
+
+  // 💡 유비의 발자취를 선으로 잇기 위한 데이터 (점선 궤적용)
+  const LIUBEI_PATH: any = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'LineString',
+      coordinates: LIUBEI_CHRONICLE.events.map((e: any) => [e.lon, e.lat])
+    }
   };
 
   return (
@@ -190,37 +205,51 @@ export default function Home() {
             
             {/* 1. 지도 영역 */}
             <div className="flex-1 bg-slate-200 rounded-[40px] overflow-hidden border border-slate-200 shadow-inner relative">
-              <Map
+<Map
                 ref={mapRef}
-                initialViewState={LIUBEI_CHRONICLE.center}
+                initialViewState={{ ...LIUBEI_CHRONICLE.center, zoom: 4.8 }}
                 style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/outdoors-v12" // ⛰️ 산맥과 강이 강조되는 지형도 스타일
-                mapboxAccessToken="pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q" // 🔑 재준님 키 적용 완료!
+                mapStyle="mapbox://styles/mapbox/light-v11" // 💡 산맥을 없애고 가장 깔끔한 도화지 스타일로 복구
+                mapboxAccessToken="pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q"
                 onLoad={handleMapLoad}
-                maxBounds={[[73.0, 15.0], [135.0, 53.0]]} // 🔒 마우스로 아무리 끌어도 중국 대륙 밖으로 못 나감
-                minZoom={4.5} // 🔍 우주 끝까지 줌아웃 되는 것 방지
+                maxBounds={[[95.0, 18.0], [123.0, 43.0]]} // 🔒 한반도와 몽골을 자르고 딱 '삼국지 대륙'에만 카메라를 가둡니다.
+                minZoom={4.5}
               >
                 <NavigationControl position="top-right" />
 
-                {/* 🏷️ 옛 지명 붓글씨 느낌 레이어 */}
+                {/* 👣 유비의 발자취 (이동 궤적 점선) */}
+                <Source id="liubei-path" type="geojson" data={LIUBEI_PATH}>
+                  <Layer
+                    id="liubei-path-line"
+                    type="line"
+                    paint={{
+                      'line-color': '#f59e0b', // 황색 점선
+                      'line-width': 3,
+                      'line-dasharray': [2, 2] // 점선 효과
+                    }}
+                  />
+                </Source>
+
+                {/* 🏷️ 옛 지명 띄우기 (폰트 에러 수정 완료) */}
                 <Source id="ancient-cities" type="geojson" data={ANCIENT_CITIES}>
                   <Layer
                     id="ancient-cities-label"
                     type="symbol"
                     layout={{
                       'text-field': ['get', 'name'],
-                      'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-                      'text-size': 15,
-                      'text-anchor': 'bottom',
-                      'text-offset': [0, -0.5]
+                      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Regular'], // 💡 Mapbox 기본 안전 폰트로 교체
+                      'text-size': 13,
+                      'text-anchor': 'top',
+                      'text-offset': [0, 1]
                     }}
                     paint={{
-                      'text-color': '#5c2b07', // 고풍스러운 짙은 갈색
-                      'text-halo-color': '#fef3c7', // 오래된 종이 느낌의 배경 테두리
+                      'text-color': '#64748b', // 세련된 슬레이트 그레이
+                      'text-halo-color': '#ffffff', // 글씨가 잘 보이도록 흰색 테두리
                       'text-halo-width': 2
                     }}
                   />
                 </Source>
+
                 {/* 📍 사건 마커 */}
                 {LIUBEI_CHRONICLE.events.map((event: any, idx: number) => (
                   <Marker key={idx} longitude={event.lon} latitude={event.lat}>
