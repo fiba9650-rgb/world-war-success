@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Map, { Marker, Popup, NavigationControl, MapRef } from 'react-map-gl';
+import Map, { Marker, Popup, NavigationControl, MapRef, Source, Layer } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // 🔑 Mapbox 토큰 (재준님의 실제 토큰으로 교체하세요)
-const MAPBOX_TOKEN = "pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q"; // 임시 토큰
-
+const MAPBOX_TOKEN = "pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q"; 
 // 📚 인물 일대기 데이터 (촉한 소열제 유비)
 const LIUBEI_CHRONICLE = {
   name: "한 소열제 유비 (劉備)의 발자취",
@@ -60,7 +59,63 @@ const LIUBEI_CHRONICLE = {
     }
   ]
 };
+// 🏛️ 삼국지 주요 옛 지명 데이터 (삼국지 11 게임 기반 40여 개 도시)
+const ANCIENT_CITIES: any = {
+  type: 'FeatureCollection',
+  features: [
+    // ⚔️ 하북 / 유주 (원소, 공손찬의 무대)
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [115.98, 39.48] }, properties: { name: "탁군 (涿郡)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [116.40, 39.90] }, properties: { name: "계 (薊)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [118.18, 39.63] }, properties: { name: "북평 (北平)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [123.17, 41.27] }, properties: { name: "양평 (襄平)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [114.49, 36.61] }, properties: { name: "업 (鄴)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [116.35, 37.16] }, properties: { name: "평원 (平原)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [112.55, 37.87] }, properties: { name: "진양 (晉陽)" } },
+    
+    // ⚔️ 중원 (조조의 심장부)
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [112.45, 34.61] }, properties: { name: "낙양 (洛陽)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [108.93, 34.26] }, properties: { name: "장안 (長安)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [114.88, 34.79] }, properties: { name: "허창 (許昌)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [114.30, 34.79] }, properties: { name: "진류 (陳留)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [115.03, 35.76] }, properties: { name: "복양 (濮陽)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [116.93, 34.73] }, properties: { name: "소패 (小沛)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [118.01, 34.33] }, properties: { name: "하비 (下邳)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [116.78, 32.58] }, properties: { name: "수춘 (壽春)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [114.02, 32.98] }, properties: { name: "여남 (汝南)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [112.53, 32.99] }, properties: { name: "완 (宛)" } },
 
+    // ⚔️ 강동 / 오 (손권의 수군 기지)
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [118.79, 32.06] }, properties: { name: "건업 (建業)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [120.58, 31.30] }, properties: { name: "오 (吳)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [120.58, 30.00] }, properties: { name: "회계 (會稽)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [115.98, 29.71] }, properties: { name: "시상 (柴桑)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [117.03, 30.51] }, properties: { name: "여강 (廬江)" } },
+
+    // ⚔️ 형주 (천하의 요충지)
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [112.14, 32.01] }, properties: { name: "양양 (襄陽)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [114.30, 30.59] }, properties: { name: "강하 (江夏)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [112.19, 30.33] }, properties: { name: "강릉 (江陵)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [111.69, 29.03] }, properties: { name: "무릉 (武陵)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [112.93, 28.22] }, properties: { name: "장사 (長沙)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [111.60, 26.22] }, properties: { name: "영릉 (零陵)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [113.03, 25.79] }, properties: { name: "계양 (桂陽)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [113.62, 29.88] }, properties: { name: "적벽 (赤壁)" } },
+
+    // ⚔️ 익주 / 촉 (유비의 천연 요새)
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [107.02, 33.07] }, properties: { name: "한중 (漢中)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [104.73, 31.46] }, properties: { name: "자동 (梓潼)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [104.06, 30.66] }, properties: { name: "성도 (成都)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [106.55, 29.56] }, properties: { name: "강주 (江州)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [103.79, 25.49] }, properties: { name: "건녕 (建寧)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [102.73, 25.04] }, properties: { name: "운남 (雲南)" } },
+
+    // ⚔️ 서북 (마초, 동탁의 고향)
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [105.72, 34.58] }, properties: { name: "천수 (天水)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [106.66, 35.54] }, properties: { name: "안정 (安定)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [102.63, 37.92] }, properties: { name: "무위 (武威)" } },
+    { type: 'Feature', geometry: { type: 'Point', coordinates: [98.50, 39.73] }, properties: { name: "서량 (西涼)" } }
+  ]
+};
 export default function Home() {
   const mapRef = useRef<MapRef>(null);
   const [selectedEvent, setSelectedEvent] = useState<any>(LIUBEI_CHRONICLE.events[0]);
@@ -77,15 +132,12 @@ export default function Home() {
     }
   };
 
-  const handleMapLoad = (e: any) => {
+ const handleMapLoad = (e: any) => {
     const map = e.target;
     map.getStyle().layers.forEach((layer: any) => {
-      if (layer.id.includes('label')) {
-        map.setLayoutProperty(layer.id, 'text-field', [
-          'coalesce',
-          ['get', 'name_ko'],
-          ['get', 'name']
-        ]);
+      // 현대 지명, 도로명, 국가 경계선 숨기기 (몰입감 업!)
+      if (layer.id.includes('label') || layer.id.includes('boundary')) {
+        map.setLayoutProperty(layer.id, 'visibility', 'none');
       }
     });
   };
@@ -142,12 +194,33 @@ export default function Home() {
                 ref={mapRef}
                 initialViewState={LIUBEI_CHRONICLE.center}
                 style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/light-v11" 
-                mapboxAccessToken={MAPBOX_TOKEN}
+                mapStyle="mapbox://styles/mapbox/outdoors-v12" // ⛰️ 산맥과 강이 강조되는 지형도 스타일
+                mapboxAccessToken="pk.eyJ1IjoiZmliYTk2NTAiLCJhIjoiY21uMDFyNW5iMGR2dDJzcTJjYzhoMnU0cSJ9.vAKcm5MMnw4NbmKMBtJ49Q" // 🔑 재준님 키 적용 완료!
                 onLoad={handleMapLoad}
+                maxBounds={[[73.0, 15.0], [135.0, 53.0]]} // 🔒 마우스로 아무리 끌어도 중국 대륙 밖으로 못 나감
+                minZoom={4.5} // 🔍 우주 끝까지 줌아웃 되는 것 방지
               >
                 <NavigationControl position="top-right" />
 
+                {/* 🏷️ 옛 지명 붓글씨 느낌 레이어 */}
+                <Source id="ancient-cities" type="geojson" data={ANCIENT_CITIES}>
+                  <Layer
+                    id="ancient-cities-label"
+                    type="symbol"
+                    layout={{
+                      'text-field': ['get', 'name'],
+                      'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                      'text-size': 15,
+                      'text-anchor': 'bottom',
+                      'text-offset': [0, -0.5]
+                    }}
+                    paint={{
+                      'text-color': '#5c2b07', // 고풍스러운 짙은 갈색
+                      'text-halo-color': '#fef3c7', // 오래된 종이 느낌의 배경 테두리
+                      'text-halo-width': 2
+                    }}
+                  />
+                </Source>
                 {/* 📍 사건 마커 */}
                 {LIUBEI_CHRONICLE.events.map((event: any, idx: number) => (
                   <Marker key={idx} longitude={event.lon} latitude={event.lat}>
