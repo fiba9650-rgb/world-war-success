@@ -116,32 +116,32 @@ const ANCIENT_CITIES: any = {
     { type: 'Feature', geometry: { type: 'Point', coordinates: [98.50, 39.73] }, properties: { name: "서량 (西涼)" } }
   ]
 };
-// 🗺️ 삼국지 주요 지역 구분선 (색상 뚜렷한 파스텔톤 적용)
+// 🗺️ 삼국지 주요 지역 구분선 및 설명 데이터
 const HAN_PROVINCES: any = {
   type: 'FeatureCollection',
   features: [
     {
-      type: 'Feature', properties: { name: "익 주", color: "#fbd38d" }, // 뚜렷한 황색
-      geometry: { type: 'Polygon', coordinates: [[[101.0, 33.5], [107.5, 34.0], [109.5, 30.0], [105.0, 25.0], [98.0, 25.0], [101.0, 33.5]]] }
+      type: 'Feature', properties: { name: "익 주", color: "#fbd38d", desc: "유비의 촉한 기반, 천혜의 요새" },
+      geometry: { type: 'Polygon', coordinates: [[[101.0, 33.5], [107.5, 34.0], [109.5, 30.0], [105.0, 25.0], [98.0, 25.0], [98.0, 30.0], [101.0, 33.5]]] }
     },
     {
-      type: 'Feature', properties: { name: "형 주", color: "#6ee7b7" }, // 뚜렷한 녹색
-      geometry: { type: 'Polygon', coordinates: [[[109.5, 33.0], [114.5, 33.0], [116.0, 29.0], [113.0, 25.0], [109.0, 25.0], [109.5, 33.0]]] }
+      type: 'Feature', properties: { name: "형 주", color: "#6ee7b7", desc: "천하의 중심, 삼국 쟁탈의 요충지" },
+      geometry: { type: 'Polygon', coordinates: [[[109.5, 33.0], [114.5, 33.0], [116.0, 29.0], [113.0, 25.0], [109.0, 25.0], [108.0, 29.0], [109.5, 33.0]]] }
     },
     {
-      type: 'Feature', properties: { name: "양 주", color: "#fca5a5" }, // 뚜렷한 적색
+      type: 'Feature', properties: { name: "양 주", color: "#fca5a5", desc: "손권의 강동, 수군이 강력한 지역" },
       geometry: { type: 'Polygon', coordinates: [[[114.5, 33.0], [122.0, 34.0], [122.0, 26.0], [116.0, 26.0], [113.0, 29.0], [114.5, 33.0]]] }
     },
     {
-      type: 'Feature', properties: { name: "중 원", color: "#93c5fd" }, // 뚜렷한 청색
-      geometry: { type: 'Polygon', coordinates: [[[110.0, 38.0], [118.0, 38.0], [118.0, 34.0], [114.5, 33.0], [109.5, 33.0], [107.5, 34.0], [110.0, 38.0]]] }
+      type: 'Feature', properties: { name: "중 원", color: "#93c5fd", desc: "조조의 심장부, 인구와 자원의 핵심" },
+      geometry: { type: 'Polygon', coordinates: [[[110.0, 38.0], [118.0, 38.0], [120.0, 34.0], [114.5, 33.0], [109.5, 33.0], [107.5, 34.0], [110.0, 38.0]]] }
     },
     {
-      type: 'Feature', properties: { name: "하 북", color: "#d8b4fe" }, // 뚜렷한 보라색
-      geometry: { type: 'Polygon', coordinates: [[[110.0, 42.0], [122.0, 42.0], [118.0, 38.0], [110.0, 38.0], [110.0, 42.0]]] }
+      type: 'Feature', properties: { name: "하 북", color: "#d8b4fe", desc: "원소의 근거지, 북방의 거대한 세력" },
+      geometry: { type: 'Polygon', coordinates: [[[110.0, 42.0], [122.0, 42.0], [120.0, 38.0], [118.0, 38.0], [110.0, 38.0], [108.0, 40.0], [110.0, 42.0]]] }
     },
     {
-      type: 'Feature', properties: { name: "서 북", color: "#fdba74" }, // 뚜렷한 살구색
+      type: 'Feature', properties: { name: "서 북", color: "#fdba74", desc: "마초·동탁의 고향, 기마병의 산실" },
       geometry: { type: 'Polygon', coordinates: [[[95.0, 40.0], [110.0, 40.0], [107.5, 34.0], [101.0, 33.5], [95.0, 35.0], [95.0, 40.0]]] }
     }
   ]
@@ -326,7 +326,26 @@ const handleMapLoad = (e: any) => {
                 )}
               </Map>
             </div>
-
+{/* 🗺️ 지역 색상 범례 (Legend) */}
+              <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm p-5 rounded-2xl shadow-xl border border-slate-200 z-10 pointer-events-none">
+                <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-200 pb-2">
+                  후한 13주 주요 지역도
+                </p>
+                <div className="flex flex-col gap-3">
+                  {HAN_PROVINCES.features.map((region: any, idx: number) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div 
+                        className="w-3.5 h-3.5 rounded-full shadow-sm ring-2 ring-white" 
+                        style={{ backgroundColor: region.properties.color }}
+                      ></div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-800 leading-none mb-1">{region.properties.name}</p>
+                        <p className="text-[10px] text-slate-500 font-medium leading-none">{region.properties.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             {/* 📊 2. 인물 스탯 대시보드 영역 */}
             <div className="bg-white border border-slate-200 p-6 rounded-[30px] shadow-sm flex-shrink-0 transition-all duration-300">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
