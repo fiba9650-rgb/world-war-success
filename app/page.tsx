@@ -97,18 +97,22 @@ export default function Home() {
               <p className="text-sm text-slate-600 leading-relaxed font-medium">{WW1_CHRONICLE.summary}</p>
             </div>
 
-            {WW1_CHRONICLE.events.map((event: any, idx: number) => (
+           {WW1_CHRONICLE.events.map((event: any, idx: number) => (
               <div 
                 key={idx} 
-                className={`p-5 rounded-3xl border-2 transition-all cursor-pointer ${selectedEvent?.title === event.title ? 'bg-red-50 border-red-500 shadow-md scale-[1.02]' : 'bg-white border-slate-100 hover:border-slate-300 shadow-sm'}`}
+                className={`p-5 rounded-3xl transition-all cursor-pointer ${
+                  selectedEvent?.title === event.title 
+                    ? 'bg-red-50 border-y-2 border-r-2 border-l-8 border-red-500 shadow-md' 
+                    : 'bg-white border-2 border-slate-100 hover:border-slate-300 shadow-sm'
+                }`}
                 onClick={() => handleEventClick(event)}
               >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-[11px] font-black text-red-600">{event.date}</span>
                   <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{event.impact}</span>
                 </div>
-                <h4 className="text-xl font-black text-slate-900 leading-tight mb-2">{event.title}</h4>
-                <p className="text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100">{event.desc}</p>
+                <h4 className="text-lg font-black text-slate-900 leading-tight mb-2 break-keep">{event.title}</h4>
+                <p className="text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100 break-keep">{event.desc}</p>
               </div>
             ))}
           </div>
