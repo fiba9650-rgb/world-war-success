@@ -116,6 +116,42 @@ const ANCIENT_CITIES: any = {
     { type: 'Feature', geometry: { type: 'Point', coordinates: [98.50, 39.73] }, properties: { name: "서량 (西涼)" } }
   ]
 };
+// 🗺️ 삼국지 주요 지역 구분선 및 지리적 구획 데이터
+const HAN_PROVINCES: any = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: { name: "익 주", color: "#f59e0b" }, // 황색
+      geometry: { type: 'Polygon', coordinates: [[[101.0, 33.5], [107.5, 34.0], [109.5, 30.0], [105.0, 25.0], [98.0, 25.0], [101.0, 33.5]]] }
+    },
+    {
+      type: 'Feature',
+      properties: { name: "형 주", color: "#10b981" }, // 녹색
+      geometry: { type: 'Polygon', coordinates: [[[109.5, 33.0], [114.5, 33.0], [116.0, 29.0], [113.0, 25.0], [109.0, 25.0], [109.5, 33.0]]] }
+    },
+    {
+      type: 'Feature',
+      properties: { name: "양 주", color: "#ef4444" }, // 적색
+      geometry: { type: 'Polygon', coordinates: [[[114.5, 33.0], [122.0, 34.0], [122.0, 26.0], [116.0, 26.0], [113.0, 29.0], [114.5, 33.0]]] }
+    },
+    {
+      type: 'Feature',
+      properties: { name: "중 원", color: "#3b82f6" }, // 청색
+      geometry: { type: 'Polygon', coordinates: [[[110.0, 38.0], [118.0, 38.0], [118.0, 34.0], [114.5, 33.0], [109.5, 33.0], [107.5, 34.0], [110.0, 38.0]]] }
+    },
+    {
+      type: 'Feature',
+      properties: { name: "하 북", color: "#a855f7" }, // 보라색
+      geometry: { type: 'Polygon', coordinates: [[[110.0, 42.0], [122.0, 42.0], [118.0, 38.0], [110.0, 38.0], [110.0, 42.0]]] }
+    },
+    {
+      type: 'Feature',
+      properties: { name: "서 북", color: "#f97316" }, // 주황색
+      geometry: { type: 'Polygon', coordinates: [[[95.0, 40.0], [110.0, 40.0], [107.5, 34.0], [101.0, 33.5], [95.0, 35.0], [95.0, 40.0]]] }
+    }
+  ]
+};
 export default function Home() {
   const mapRef = useRef<MapRef>(null);
   const [selectedEvent, setSelectedEvent] = useState<any>(LIUBEI_CHRONICLE.events[0]);
