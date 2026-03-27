@@ -75,48 +75,39 @@ const LIUBEI_CHRONICLE: any = {
     });
   };
   // 현재 선택된 사건의 연도를 바탕으로 소속국가 배열 생성
-  const { entente, central, collapsed } = getAlliancesByYear(selectedEvent?.year);
+ export default function Page() { // 💡 (이름이 Page나 Home이어도 상관없습니다)
+  const mapRef = useRef<MapRef>(null);
+  
+  // 💡 유비 데이터로 시작하도록 변경
+  const [selectedEvent, setSelectedEvent] = useState<any>(LIUBEI_CHRONICLE.events[0]);
+
+  const handleEventClick = (event: any) => {
+    setSelectedEvent(event);
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [event.lon, event.lat],
+        zoom: 5.5, // 중국 대륙 스케일
+        essential: true,
+        duration: 2500
+      });
+    }
+  };
+
+  const handleMapLoad = (e: any) => {
+    const map = e.target;
+    map.getStyle().layers.forEach((layer: any) => {
+      if (layer.id.includes('label')) {
+        map.setLayoutProperty(layer.id, 'text-field', [
+          'coalesce',
+          ['get', 'name_ko'],
+          ['get', 'name']
+        ]);
+      }
+    });
+  };
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-red-200 overflow-hidden">
-      <div className="max-w-[1600px] mx-auto h-screen flex flex-col p-6 md:p-10">
-        
-        {/* 📡 미니멀 헤더 */}
-        <div className="flex justify-between items-end mb-6 pb-4 border-b border-slate-200">
-          <div>
-            <h1 className="text-4xl font-black text-red-600 tracking-tighter uppercase leading-none">WORLD-WAR.KR</h1>
-            <p className="text-slate-500 text-[10px] mt-2 font-mono uppercase tracking-widest">Historical Map Archive</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-0">
-          
-          {/* 📜 왼쪽: 타임라인 */}
-          <div className="lg:col-span-4 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar pb-6">
-            <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm mb-2">
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-2">{WW1_CHRONICLE.name}</h2>
-              <p className="text-sm text-slate-600 leading-relaxed font-medium">{WW1_CHRONICLE.summary}</p>
-            </div>
-
-           {WW1_CHRONICLE.events.map((event: any, idx: number) => (
-              <div 
-                key={idx} 
-                className={`p-5 rounded-3xl transition-all cursor-pointer ${
-                  selectedEvent?.title === event.title 
-                    ? 'bg-red-50 border-y-2 border-r-2 border-l-8 border-red-500 shadow-md' 
-                    : 'bg-white border-2 border-slate-100 hover:border-slate-300 shadow-sm'
-                }`}
-                onClick={() => handleEventClick(event)}
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[11px] font-black text-red-600">{event.date}</span>
-                  <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{event.impact}</span>
-                </div>
-                <h4 className="text-lg font-black text-slate-900 leading-tight mb-2 break-keep">{event.title}</h4>
-                <p className="text-sm text-slate-600 leading-relaxed pt-2 border-t border-slate-100 break-keep">{event.desc}</p>
-              </div>
-            ))}
-          </div>
+    <main className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-amber-200 overflow-hidden">
 
           {/* 🗺️ 오른쪽: 메인 지도 */}
           <div className="lg:col-span-8 flex flex-col gap-4 min-h-0">
