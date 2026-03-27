@@ -337,41 +337,28 @@ const handleMapLoad = (e: any) => {
                   </Popup>
                 )}
               </Map>
-              {/* 🏙️ 여기에 사이드바가 들어갑니다! */}
-              <div className="absolute top-6 right-16 bottom-6 w-48 bg-white/90 backdrop-blur-md rounded-[30px] shadow-2xl border border-slate-200 z-10 overflow-hidden flex flex-col">
-                <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest text-center">주요 거점 목록</p>
+             {/* 🏙️ 초슬림 오른쪽 도시 리스트 사이드바 */}
+              <div className="absolute top-6 right-16 bottom-6 w-36 bg-white/80 backdrop-blur-md rounded-[24px] shadow-xl border border-slate-200 z-10 overflow-hidden flex flex-col">
+                <div className="p-3 border-b border-slate-100 bg-slate-50/50">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">CITY LIST</p>
                 </div>
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-1.5 text-center">
                   {HAN_PROVINCES.features.map((region: any, idx: number) => (
                     <button
                       key={idx}
                       onClick={() => {
-                        // 첫 번째 좌표를 기준으로 이동
                         const coords = region.geometry.coordinates[0][0]; 
-                        mapRef.current?.flyTo({ center: [coords[0], coords[1]], zoom: 6.5, duration: 2000 });
+                        mapRef.current?.flyTo({ center: [coords[0], coords[1]], zoom: 6.8, duration: 1500 });
                       }}
-                      className="w-full flex items-center gap-2 p-3 rounded-2xl hover:bg-slate-100 transition-all text-left group"
+                      className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:shadow-sm transition-all text-left group"
                     >
-                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: region.properties.color }}></div>
-                      <span className="text-xs font-bold text-slate-700 group-hover:text-slate-900">{region.properties.name}</span>
+                      <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: region.properties.color }}></div>
+                      <span className="text-[11px] font-bold text-slate-600 group-hover:text-slate-900 leading-none">{region.properties.name}</span>
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-{/* 🗺️ 지역 색상 범례 (Legend) */}
-<div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-5 py-3 rounded-full shadow-md border border-slate-200 z-10 pointer-events-none flex items-center gap-4">
-                {HAN_PROVINCES.features.map((region: any, idx: number) => (
-                  <div key={idx} className="flex items-center gap-1.5 shrink-0">
-                    <div 
-                      className="w-3 h-3 rounded-full shadow-inner" 
-                      style={{ backgroundColor: region.properties.color }}
-                    ></div>
-                    <span className="text-xs font-black text-slate-700">{region.properties.name}</span>
-                  </div>
-                ))}
-               </div>
             {/* 📊 2. 인물 스탯 대시보드 영역 */}
             <div className="bg-white border border-slate-200 p-6 rounded-[30px] shadow-sm flex-shrink-0 transition-all duration-300">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
