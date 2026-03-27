@@ -134,8 +134,9 @@ const HAN_PROVINCES: any = {
     { type: 'Feature', properties: { name: "여남" }, geometry: { type: 'Polygon', coordinates: [[[113.8, 33.5], [116.5, 33.5], [116.5, 31.8], [114.0, 31.8], [114.0, 32.5], [113.8, 32.5], [113.8, 33.5]]] } },
     { type: 'Feature', properties: { name: "진류" }, geometry: { type: 'Polygon', coordinates: [[[113.8, 36.8], [116.2, 36.8], [116.2, 35.5], [113.8, 35.5], [113.8, 36.8]]] } },
     { type: 'Feature', properties: { name: "소패" }, geometry: { type: 'Polygon', coordinates: [[[116.2, 35.5], [118.5, 35.5], [118.5, 34.2], [116.2, 34.2], [116.2, 35.5]]] } },
-    { type: 'Feature', properties: { name: "하비" }, geometry: { type: 'Polygon', coordinates: [[[118.5, 35.5], [121.2, 35.5], [121.2, 33.5], [118.5, 33.5], [118.5, 35.5]]] } }
-  // --- ⚔️ 형주 영역 (양양-강하-강릉-무릉-장사-영릉-계양) ---
+    { type: 'Feature', properties: { name: "하비" }, geometry: { type: 'Polygon', coordinates: [[[118.5, 35.5], [121.2, 35.5], [121.2, 33.5], [118.5, 33.5], [118.5, 35.5]]] } },
+ 
+    // --- ⚔️ 형주 영역 (양양-강하-강릉-무릉-장사-영릉-계양) ---
     { type: 'Feature', properties: { name: "양양" }, geometry: { type: 'Polygon', coordinates: [[[111.2, 33.5], [114.5, 33.5], [114.5, 31.8], [113.2, 31.8], [113.2, 31.0], [111.2, 31.0], [111.2, 33.5]]] } },
     { type: 'Feature', properties: { name: "강하" }, geometry: { type: 'Polygon', coordinates: [[[114.5, 32.5], [117.2, 32.5], [117.2, 30.5], [115.5, 30.5], [115.5, 31.5], [114.5, 31.5], [114.5, 32.5]]] } },
     { type: 'Feature', properties: { name: "강릉" }, geometry: { type: 'Polygon', coordinates: [[[111.2, 31.0], [113.2, 31.0], [113.2, 29.5], [111.8, 29.5], [111.8, 28.8], [111.2, 28.8], [111.2, 31.0]]] } },
