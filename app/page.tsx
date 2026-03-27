@@ -120,35 +120,56 @@ const ANCIENT_CITIES: any = {
 const HAN_PROVINCES: any = {
   type: 'FeatureCollection',
   features: [
-    // ⚔️ 하북 / 유주 영역 (탁군, 계, 북평, 양평, 업, 평원, 진양)
-    { type: 'Feature', properties: { name: "탁군", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[115.0, 40.5], [117.0, 40.5], [117.0, 38.5], [115.0, 38.5], [115.0, 40.5]]] } },
-    { type: 'Feature', properties: { name: "업", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 37.5], [115.5, 37.5], [115.5, 35.5], [113.5, 35.5], [113.5, 37.5]]] } },
+    // ⚔️ 하북 / 유주 영역
+    { type: 'Feature', properties: { name: "탁군", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[115.0, 40.5], [116.5, 40.5], [116.5, 39.0], [115.0, 39.0], [115.0, 40.5]]] } },
+    { type: 'Feature', properties: { name: "계", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[116.5, 40.5], [118.0, 40.5], [118.0, 39.0], [116.5, 39.0], [116.5, 40.5]]] } },
+    { type: 'Feature', properties: { name: "북평", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[118.0, 40.5], [120.0, 40.5], [120.0, 39.0], [118.0, 39.0], [118.0, 40.5]]] } },
+    { type: 'Feature', properties: { name: "양평", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[122.0, 42.0], [124.5, 42.0], [124.5, 40.5], [122.0, 40.5], [122.0, 42.0]]] } },
+    { type: 'Feature', properties: { name: "업", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 37.5], [115.5, 37.5], [115.5, 36.0], [113.5, 36.0], [113.5, 37.5]]] } },
     { type: 'Feature', properties: { name: "평원", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[115.5, 38.0], [117.5, 38.0], [117.5, 36.5], [115.5, 36.5], [115.5, 38.0]]] } },
-    
-    // ⚔️ 중원 영역 (낙양, 장안, 허창, 진류, 복양, 소패, 하비, 수춘, 여남, 완)
-    { type: 'Feature', properties: { name: "낙양", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 35.5], [113.5, 35.5], [113.5, 34.0], [111.5, 34.0], [111.5, 35.5]]] } },
-    { type: 'Feature', properties: { name: "장안", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[107.5, 35.5], [109.5, 35.5], [109.5, 33.5], [107.5, 33.5], [107.5, 35.5]]] } },
-    { type: 'Feature', properties: { name: "허창", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[114.0, 35.5], [115.5, 35.5], [115.5, 34.0], [114.0, 34.0], [114.0, 35.5]]] } },
-    { type: 'Feature', properties: { name: "하비", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[117.0, 35.5], [119.0, 35.5], [119.0, 33.5], [117.0, 33.5], [117.0, 35.5]]] } },
+    { type: 'Feature', properties: { name: "진양", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 38.5], [113.5, 38.5], [113.5, 37.0], [111.5, 37.0], [111.5, 38.5]]] } },
+
+    // ⚔️ 중원 영역
+    { type: 'Feature', properties: { name: "낙양", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 35.5], [113.5, 35.5], [113.5, 34.2], [111.5, 34.2], [111.5, 35.5]]] } },
+    { type: 'Feature', properties: { name: "장안", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[108.0, 35.5], [110.0, 35.5], [110.0, 33.5], [108.0, 33.5], [108.0, 35.5]]] } },
+    { type: 'Feature', properties: { name: "허창", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[114.0, 35.5], [115.5, 35.5], [115.5, 34.2], [114.0, 34.2], [114.0, 35.5]]] } },
+    { type: 'Feature', properties: { name: "진류", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 35.5], [114.8, 35.5], [114.8, 34.5], [113.5, 34.5], [113.5, 35.5]]] } },
+    { type: 'Feature', properties: { name: "복양", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[114.5, 36.5], [116.0, 36.5], [116.0, 35.5], [114.5, 35.5], [114.5, 36.5]]] } },
+    { type: 'Feature', properties: { name: "소패", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[116.0, 35.5], [117.5, 35.5], [117.5, 34.2], [116.0, 34.2], [116.0, 35.5]]] } },
+    { type: 'Feature', properties: { name: "하비", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[117.5, 35.5], [119.0, 35.5], [119.0, 34.0], [117.5, 34.0], [117.5, 35.5]]] } },
     { type: 'Feature', properties: { name: "수춘", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[116.0, 33.5], [117.5, 33.5], [117.5, 32.0], [116.0, 32.0], [116.0, 33.5]]] } },
-    { type: 'Feature', properties: { name: "완", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 33.8], [113.5, 33.8], [113.5, 32.2], [111.5, 32.2], [111.5, 33.8]]] } },
+    { type: 'Feature', properties: { name: "여남", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 33.5], [115.0, 33.5], [115.0, 32.2], [113.5, 32.2], [113.5, 33.5]]] } },
+    { type: 'Feature', properties: { name: "완", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 34.2], [113.0, 34.2], [113.0, 32.5], [111.5, 32.5], [111.5, 34.2]]] } },
 
-    // ⚔️ 강동 영역 (건업, 오, 회계, 시상, 여강)
-    { type: 'Feature', properties: { name: "건업", color: "#ef4444" }, geometry: { type: 'Polygon', coordinates: [[[118.0, 33.0], [120.0, 33.0], [120.0, 31.0], [118.0, 31.0], [118.0, 33.0]]] } },
+    // ⚔️ 강동 / 오 영역
+    { type: 'Feature', properties: { name: "건업", color: "#ef4444" }, geometry: { type: 'Polygon', coordinates: [[[118.0, 32.5], [120.0, 32.5], [120.0, 31.5], [118.0, 31.5], [118.0, 32.5]]] } },
     { type: 'Feature', properties: { name: "오", color: "#ef4444" }, geometry: { type: 'Polygon', coordinates: [[[120.0, 32.0], [121.5, 32.0], [121.5, 30.5], [120.0, 30.5], [120.0, 32.0]]] } },
+    { type: 'Feature', properties: { name: "회계", color: "#ef4444" }, geometry: { type: 'Polygon', coordinates: [[[120.0, 30.5], [121.5, 30.5], [121.5, 29.0], [120.0, 29.0], [120.0, 30.5]]] } },
+    { type: 'Feature', properties: { name: "시상", color: "#ef4444" }, geometry: { type: 'Polygon', coordinates: [[[115.0, 30.5], [117.0, 30.5], [117.0, 29.0], [115.0, 29.0], [115.0, 30.5]]] } },
+    { type: 'Feature', properties: { name: "여강", color: "#ef4444" }, geometry: { type: 'Polygon', coordinates: [[[116.5, 31.5], [118.0, 31.5], [118.0, 30.0], [116.5, 30.0], [116.5, 31.5]]] } },
 
-    // ⚔️ 형주 영역 (양양, 강하, 강릉, 무릉, 장사, 영릉, 계양)
-    { type: 'Feature', properties: { name: "양양", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 32.5], [113.0, 32.5], [113.0, 31.0], [111.5, 31.0], [111.5, 32.5]]] } },
-    { type: 'Feature', properties: { name: "강릉", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 31.0], [113.0, 31.0], [113.0, 29.5], [111.5, 29.5], [111.5, 31.0]]] } },
-    { type: 'Feature', properties: { name: "장사", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[112.0, 29.0], [114.0, 29.0], [114.0, 27.5], [112.0, 27.5], [112.0, 29.0]]] } },
+    // ⚔️ 형주 영역
+    { type: 'Feature', properties: { name: "양양", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 32.5], [113.0, 32.5], [113.0, 31.5], [111.5, 31.5], [111.5, 32.5]]] } },
+    { type: 'Feature', properties: { name: "강하", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 31.5], [115.0, 31.5], [115.0, 30.0], [113.5, 30.0], [113.5, 31.5]]] } },
+    { type: 'Feature', properties: { name: "강릉", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 31.5], [113.0, 31.5], [113.0, 30.0], [111.5, 30.0], [111.5, 31.5]]] } },
+    { type: 'Feature', properties: { name: "무릉", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[110.5, 30.0], [112.5, 30.0], [112.5, 28.5], [110.5, 28.5], [110.5, 30.0]]] } },
+    { type: 'Feature', properties: { name: "장사", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[112.5, 29.0], [114.0, 29.0], [114.0, 27.5], [112.5, 27.5], [112.5, 29.0]]] } },
+    { type: 'Feature', properties: { name: "영릉", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[111.0, 27.5], [112.5, 27.5], [112.5, 26.0], [111.0, 26.0], [111.0, 27.5]]] } },
+    { type: 'Feature', properties: { name: "계양", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[112.5, 26.5], [114.0, 26.5], [114.0, 25.0], [112.5, 25.0], [112.5, 26.5]]] } },
 
-    // ⚔️ 익주 영역 (한중, 자동, 성도, 강주, 건녕, 운남)
+    // ⚔️ 익주 / 촉 영역
     { type: 'Feature', properties: { name: "한중", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[106.0, 34.0], [108.0, 34.0], [108.0, 32.5], [106.0, 32.5], [106.0, 34.0]]] } },
-    { type: 'Feature', properties: { name: "성도", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[103.0, 31.5], [105.0, 31.5], [105.0, 29.5], [103.0, 29.5], [103.0, 31.5]]] } },
-    
-    // ⚔️ 서북 영역 (천수, 안정, 무위, 서량)
-    { type: 'Feature', properties: { name: "서량", color: "#f97316" }, geometry: { type: 'Polygon', coordinates: [[[97.0, 41.0], [100.0, 41.0], [100.0, 38.5], [97.0, 38.5], [97.0, 41.0]]] } },
-    { type: 'Feature', properties: { name: "천수", color: "#f97316" }, geometry: { type: 'Polygon', coordinates: [[[104.5, 35.5], [106.5, 35.5], [106.5, 34.0], [104.5, 34.0], [104.5, 35.5]]] } }
+    { type: 'Feature', properties: { name: "자동", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[104.0, 32.5], [106.0, 32.5], [106.0, 31.0], [104.0, 31.0], [104.0, 32.5]]] } },
+    { type: 'Feature', properties: { name: "성도", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[103.0, 31.5], [105.0, 31.5], [105.0, 30.0], [103.0, 30.0], [103.0, 31.5]]] } },
+    { type: 'Feature', properties: { name: "강주", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[105.5, 30.5], [107.5, 30.5], [107.5, 29.0], [105.5, 29.0], [105.5, 30.5]]] } },
+    { type: 'Feature', properties: { name: "건녕", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[103.0, 26.5], [105.0, 26.5], [105.0, 25.0], [103.0, 25.0], [103.0, 26.5]]] } },
+    { type: 'Feature', properties: { name: "운남", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[101.5, 26.0], [103.5, 26.0], [103.5, 24.5], [101.5, 24.5], [101.5, 26.0]]] } },
+
+    // ⚔️ 서북 영역
+    { type: 'Feature', properties: { name: "천수", color: "#f97316" }, geometry: { type: 'Polygon', coordinates: [[[104.5, 35.5], [106.5, 35.5], [106.5, 34.2], [104.5, 34.2], [104.5, 35.5]]] } },
+    { type: 'Feature', properties: { name: "안정", color: "#f97316" }, geometry: { type: 'Polygon', coordinates: [[[105.5, 36.5], [107.5, 36.5], [107.5, 35.0], [105.5, 35.0], [105.5, 36.5]]] } },
+    { type: 'Feature', properties: { name: "무위", color: "#f97316" }, geometry: { type: 'Polygon', coordinates: [[[101.5, 38.5], [104.0, 38.5], [104.0, 37.0], [101.5, 37.0], [101.5, 38.5]]] } },
+    { type: 'Feature', properties: { name: "서량", color: "#f97316" }, geometry: { type: 'Polygon', coordinates: [[[97.0, 41.0], [100.0, 41.0], [100.0, 38.5], [97.0, 38.5], [97.0, 41.0]]] } }
   ]
 };
 export default function Home() {
