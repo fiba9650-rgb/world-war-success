@@ -72,7 +72,20 @@ export default function Home() {
       });
     }
   };
-
+// 👇 --- [여기서부터 복사해서 붙여넣으세요] --- 👇
+  const handleMapLoad = (e: any) => {
+    const map = e.target;
+    map.getStyle().layers.forEach((layer: any) => {
+      // 지도 위 글씨(label)들을 찾아서 한국어(name_ko)로 바꿔주는 역할
+      if (layer.id.includes('label')) {
+        map.setLayoutProperty(layer.id, 'text-field', [
+          'coalesce',
+          ['get', 'name_ko'],
+          ['get', 'name']
+        ]);
+      }
+    });
+  };
   // 현재 선택된 사건의 연도를 바탕으로 소속국가 배열 생성
   const { entente, central, collapsed } = getAlliancesByYear(selectedEvent?.year);
 
@@ -126,6 +139,7 @@ export default function Home() {
                 style={{ width: '100%', height: '100%' }}
                 mapStyle="mapbox://styles/mapbox/light-v11" 
                 mapboxAccessToken={MAPBOX_TOKEN}
+                onLoad={handleMapLoad}
               >
                 <NavigationControl position="top-right" />
 
