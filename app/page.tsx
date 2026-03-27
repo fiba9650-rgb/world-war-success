@@ -120,61 +120,53 @@ const ANCIENT_CITIES: any = {
 const HAN_PROVINCES: any = {
   type: 'FeatureCollection',
   features: [
-    // --- ⚔️ 하북 / 유주 (경도 112~125 / 위도 35.5~42.5) ---
-    { type: 'Feature', properties: { name: "탁군" }, geometry: { type: 'Polygon', coordinates: [[[115.0, 40.5], [116.5, 40.5], [116.5, 39.0], [115.0, 39.0], [115.0, 40.5]]] } },
-    { type: 'Feature', properties: { name: "계" }, geometry: { type: 'Polygon', coordinates: [[[116.5, 40.5], [118.0, 40.5], [118.0, 39.0], [116.5, 39.0], [116.5, 40.5]]] } },
-    { type: 'Feature', properties: { name: "북평" }, geometry: { type: 'Polygon', coordinates: [[[118.0, 40.5], [121.0, 40.5], [121.0, 39.0], [118.0, 39.0], [118.0, 40.5]]] } },
-    { type: 'Feature', properties: { name: "양평" }, geometry: { type: 'Polygon', coordinates: [[[121.0, 42.5], [125.0, 42.5], [125.0, 40.5], [121.0, 40.5], [121.0, 42.5]]] } },
-    { type: 'Feature', properties: { name: "진양" }, geometry: { type: 'Polygon', coordinates: [[[111.0, 39.0], [113.5, 39.0], [113.5, 37.0], [111.0, 37.0], [111.0, 39.0]]] } },
-    { type: 'Feature', properties: { name: "업" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 37.5], [115.5, 37.5], [115.5, 35.5], [113.5, 35.5], [113.5, 37.5]]] } },
-    { type: 'Feature', properties: { name: "평원" }, geometry: { type: 'Polygon', coordinates: [[[115.5, 39.0], [118.0, 39.0], [118.0, 37.5], [115.5, 37.5], [115.5, 39.0]]] } },
-    { type: 'Feature', properties: { name: "남피" }, geometry: { type: 'Polygon', coordinates: [[[117.0, 39.0], [119.5, 39.0], [119.5, 37.5], [117.0, 37.5], [117.0, 39.0]]] } },
+    // --- ⚔️ 하북 영역 (유주/기주/병주) ---
+    { type: 'Feature', properties: { name: "탁군" }, geometry: { type: 'Polygon', coordinates: [[[114.5, 41.2], [116.8, 41.2], [116.8, 39.5], [115.8, 39.5], [115.8, 40.2], [114.5, 40.2], [114.5, 41.2]]] } },
+    { type: 'Feature', properties: { name: "계" }, geometry: { type: 'Polygon', coordinates: [[[116.8, 41.2], [119.2, 41.2], [119.2, 39.5], [116.8, 39.5], [116.8, 41.2]]] } },
+    { type: 'Feature', properties: { name: "북평" }, geometry: { type: 'Polygon', coordinates: [[[119.2, 41.2], [121.8, 41.2], [121.8, 39.0], [119.2, 39.0], [119.2, 41.2]]] } },
+    { type: 'Feature', properties: { name: "남피" }, geometry: { type: 'Polygon', coordinates: [[[117.2, 39.5], [120.0, 39.5], [120.0, 37.8], [118.2, 37.8], [118.2, 38.5], [117.2, 38.5], [117.2, 39.5]]] } },
+    { type: 'Feature', properties: { name: "업" }, geometry: { type: 'Polygon', coordinates: [[[112.5, 37.8], [115.2, 37.8], [115.2, 36.8], [116.2, 36.8], [116.2, 35.5], [112.5, 35.5], [112.5, 37.8]]] } },
+    { type: 'Feature', properties: { name: "평원" }, geometry: { type: 'Polygon', coordinates: [[[115.2, 38.8], [118.2, 38.8], [118.2, 37.5], [116.2, 37.5], [116.2, 38.2], [115.2, 38.2], [115.2, 38.8]]] } },
+    // --- ⚔️ 중원 영역 (낙양/장안/허창/여남) ---
+    { type: 'Feature', properties: { name: "낙양" }, geometry: { type: 'Polygon', coordinates: [[[111.2, 35.5], [113.8, 35.5], [113.8, 34.5], [114.5, 34.5], [114.5, 33.5], [111.2, 33.5], [111.2, 35.5]]] } },
+    { type: 'Feature', properties: { name: "장안" }, geometry: { type: 'Polygon', coordinates: [[[106.8, 36.5], [111.2, 36.5], [111.2, 33.5], [108.5, 33.5], [108.5, 34.8], [106.8, 34.8], [106.8, 36.5]]] } },
+    { type: 'Feature', properties: { name: "허창" }, geometry: { type: 'Polygon', coordinates: [[[113.8, 35.5], [116.8, 35.5], [116.8, 34.2], [115.5, 34.2], [115.5, 33.5], [113.8, 33.5], [113.8, 35.5]]] } },
+    { type: 'Feature', properties: { name: "여남" }, geometry: { type: 'Polygon', coordinates: [[[113.8, 33.5], [116.5, 33.5], [116.5, 31.8], [114.0, 31.8], [114.0, 32.5], [113.8, 32.5], [113.8, 33.5]]] } },
+    { type: 'Feature', properties: { name: "진류" }, geometry: { type: 'Polygon', coordinates: [[[113.8, 36.8], [116.2, 36.8], [116.2, 35.5], [113.8, 35.5], [113.8, 36.8]]] } },
+    { type: 'Feature', properties: { name: "소패" }, geometry: { type: 'Polygon', coordinates: [[[116.2, 35.5], [118.5, 35.5], [118.5, 34.2], [116.2, 34.2], [116.2, 35.5]]] } },
+    { type: 'Feature', properties: { name: "하비" }, geometry: { type: 'Polygon', coordinates: [[[118.5, 35.5], [121.2, 35.5], [121.2, 33.5], [118.5, 33.5], [118.5, 35.5]]] } }
+  // --- ⚔️ 형주 영역 (양양-강하-강릉-무릉-장사-영릉-계양) ---
+    { type: 'Feature', properties: { name: "양양" }, geometry: { type: 'Polygon', coordinates: [[[111.2, 33.5], [114.5, 33.5], [114.5, 31.8], [113.2, 31.8], [113.2, 31.0], [111.2, 31.0], [111.2, 33.5]]] } },
+    { type: 'Feature', properties: { name: "강하" }, geometry: { type: 'Polygon', coordinates: [[[114.5, 32.5], [117.2, 32.5], [117.2, 30.5], [115.5, 30.5], [115.5, 31.5], [114.5, 31.5], [114.5, 32.5]]] } },
+    { type: 'Feature', properties: { name: "강릉" }, geometry: { type: 'Polygon', coordinates: [[[111.2, 31.0], [113.2, 31.0], [113.2, 29.5], [111.8, 29.5], [111.8, 28.8], [111.2, 28.8], [111.2, 31.0]]] } },
+    { type: 'Feature', properties: { name: "무릉" }, geometry: { type: 'Polygon', coordinates: [[[109.5, 30.8], [111.2, 30.8], [111.2, 28.5], [109.5, 28.5], [109.5, 30.8]]] } },
+    { type: 'Feature', properties: { name: "장사" }, geometry: { type: 'Polygon', coordinates: [[[111.8, 29.5], [115.0, 29.5], [115.0, 27.5], [113.2, 27.5], [113.2, 28.5], [111.8, 28.5], [111.8, 29.5]]] } },
+    { type: 'Feature', properties: { name: "영릉" }, geometry: { type: 'Polygon', coordinates: [[[110.2, 28.5], [111.8, 28.5], [111.8, 26.2], [110.2, 26.2], [110.2, 28.5]]] } },
+    { type: 'Feature', properties: { name: "계양" }, geometry: { type: 'Polygon', coordinates: [[[111.8, 27.5], [115.0, 27.5], [115.0, 25.0], [111.8, 25.0], [111.8, 27.5]]] } },
 
-    // --- ⚔️ 중원 (경도 107~122 / 위도 32~36) ---
-    { type: 'Feature', properties: { name: "장안" }, geometry: { type: 'Polygon', coordinates: [[[107.0, 35.5], [111.5, 35.5], [111.5, 33.5], [107.0, 33.5], [107.0, 35.5]]] } },
-    { type: 'Feature', properties: { name: "낙양" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 35.5], [113.5, 35.5], [113.5, 34.0], [111.5, 34.0], [111.5, 35.5]]] } },
-    { type: 'Feature', properties: { name: "허창" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 35.5], [115.5, 35.5], [115.5, 34.0], [113.5, 34.0], [113.5, 35.5]]] } },
-    { type: 'Feature', properties: { name: "진류" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 36.5], [115.5, 36.5], [115.5, 35.5], [113.5, 35.5], [113.5, 36.5]]] } },
-    { type: 'Feature', properties: { name: "복양" }, geometry: { type: 'Polygon', coordinates: [[[115.5, 37.5], [117.5, 37.5], [117.5, 36.0], [115.5, 36.0], [115.5, 37.5]]] } },
-    { type: 'Feature', properties: { name: "소패" }, geometry: { type: 'Polygon', coordinates: [[[116.0, 35.5], [117.5, 35.5], [117.5, 34.0], [116.0, 34.0], [116.0, 35.5]]] } },
-    { type: 'Feature', properties: { name: "하비" }, geometry: { type: 'Polygon', coordinates: [[[117.5, 35.5], [120.5, 35.5], [120.5, 33.5], [117.5, 33.5], [117.5, 35.5]]] } },
-    { type: 'Feature', properties: { name: "수춘" }, geometry: { type: 'Polygon', coordinates: [[[116.0, 34.0], [118.5, 34.0], [118.5, 32.0], [116.0, 32.0], [116.0, 34.0]]] } },
-    { type: 'Feature', properties: { name: "여남" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 34.0], [116.0, 34.0], [116.0, 32.0], [113.5, 32.0], [113.5, 34.0]]] } },
-    { type: 'Feature', properties: { name: "완" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 34.0], [113.5, 34.0], [113.5, 32.0], [111.5, 32.0], [111.5, 34.0]]] } },
-    { type: 'Feature', properties: { name: "북해" }, geometry: { type: 'Polygon', coordinates: [[[118.0, 37.5], [121.0, 37.5], [121.0, 36.0], [118.0, 36.0], [118.0, 37.5]]] } },
+    // --- ⚔️ 강동 영역 (건업-오-회계-여강-시상) ---
+    { type: 'Feature', properties: { name: "건업" }, geometry: { type: 'Polygon', coordinates: [[[118.5, 33.5], [121.2, 33.5], [121.2, 31.5], [118.5, 31.5], [118.5, 33.5]]] } },
+    { type: 'Feature', properties: { name: "오" }, geometry: { type: 'Polygon', coordinates: [[[121.2, 33.0], [123.5, 33.0], [123.5, 31.0], [121.2, 31.0], [121.2, 33.0]]] } },
+    { type: 'Feature', properties: { name: "회계" }, geometry: { type: 'Polygon', coordinates: [[[121.2, 31.0], [123.5, 31.0], [123.5, 28.5], [121.2, 28.5], [121.2, 31.0]]] } },
+    { type: 'Feature', properties: { name: "여강" }, geometry: { type: 'Polygon', coordinates: [[[116.5, 32.2], [118.5, 32.2], [118.5, 30.5], [116.5, 30.5], [116.5, 32.2]]] } },
+    { type: 'Feature', properties: { name: "시상" }, geometry: { type: 'Polygon', coordinates: [[[115.0, 30.5], [118.5, 30.5], [118.5, 28.8], [116.8, 28.8], [116.8, 29.5], [115.0, 29.5], [115.0, 30.5]]] } },
 
-    // --- ⚔️ 강동 (경도 115~123 / 위도 25~32.5) ---
-    { type: 'Feature', properties: { name: "건업" }, geometry: { type: 'Polygon', coordinates: [[[118.5, 33.0], [121.0, 33.0], [121.0, 31.0], [118.5, 31.0], [118.5, 33.0]]] } },
-    { type: 'Feature', properties: { name: "오" }, geometry: { type: 'Polygon', coordinates: [[[121.0, 32.5], [123.0, 32.5], [123.0, 30.5], [121.0, 30.5], [121.0, 32.5]]] } },
-    { type: 'Feature', properties: { name: "회계" }, geometry: { type: 'Polygon', coordinates: [[[121.0, 30.5], [123.0, 30.5], [123.0, 28.5], [121.0, 28.5], [121.0, 30.5]]] } },
-    { type: 'Feature', properties: { name: "시상" }, geometry: { type: 'Polygon', coordinates: [[[115.0, 30.5], [118.5, 30.5], [118.5, 29.0], [115.0, 29.0], [115.0, 30.5]]] } },
-    { type: 'Feature', properties: { name: "여강" }, geometry: { type: 'Polygon', coordinates: [[[116.0, 32.0], [118.5, 32.0], [118.5, 30.5], [116.0, 30.5], [116.0, 32.0]]] } },
+    // --- ⚔️ 익주 영역 (한중-자동-성도-강주-건녕-운남) ---
+    { type: 'Feature', properties: { name: "한중" }, geometry: { type: 'Polygon', coordinates: [[[105.0, 35.5], [108.5, 35.5], [108.5, 33.5], [105.0, 33.5], [105.0, 35.5]]] } },
+    { type: 'Feature', properties: { name: "자동" }, geometry: { type: 'Polygon', coordinates: [[[103.5, 33.5], [106.5, 33.5], [106.5, 31.5], [103.5, 31.5], [103.5, 33.5]]] } },
+    { type: 'Feature', properties: { name: "성도" }, geometry: { type: 'Polygon', coordinates: [[[101.5, 31.5], [105.0, 31.5], [105.0, 29.5], [101.5, 29.5], [101.5, 31.5]]] } },
+    { type: 'Feature', properties: { name: "강주" }, geometry: { type: 'Polygon', coordinates: [[[105.0, 31.5], [109.5, 31.5], [109.5, 29.5], [105.0, 29.5], [105.0, 31.5]]] } },
+    { type: 'Feature', properties: { name: "건녕" }, geometry: { type: 'Polygon', coordinates: [[[101.5, 29.5], [106.5, 29.5], [106.5, 26.5], [101.5, 26.5], [101.5, 29.5]]] } },
+    { type: 'Feature', properties: { name: "운남" }, geometry: { type: 'Polygon', coordinates: [[[97.5, 27.5], [101.5, 27.5], [101.5, 24.5], [97.5, 24.5], [97.5, 27.5]]] } },
 
-    // --- ⚔️ 형주 (경도 109~116 / 위도 24~33) ---
-    { type: 'Feature', properties: { name: "양양" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 33.0], [114.0, 33.0], [114.0, 31.0], [111.5, 31.0], [111.5, 33.0]]] } },
-    { type: 'Feature', properties: { name: "강하" }, geometry: { type: 'Polygon', coordinates: [[[114.0, 32.0], [116.0, 32.0], [116.0, 30.0], [114.0, 30.0], [114.0, 32.0]]] } },
-    { type: 'Feature', properties: { name: "강릉" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 31.0], [114.0, 31.0], [114.0, 29.0], [111.5, 29.0], [111.5, 31.0]]] } },
-    { type: 'Feature', properties: { name: "무릉" }, geometry: { type: 'Polygon', coordinates: [[[109.0, 30.5], [111.5, 30.5], [111.5, 28.5], [109.0, 28.5], [109.0, 30.5]]] } },
-    { type: 'Feature', properties: { name: "장사" }, geometry: { type: 'Polygon', coordinates: [[[112.0, 29.5], [115.0, 29.5], [115.0, 27.5], [112.0, 27.5], [112.0, 29.5]]] } },
-    { type: 'Feature', properties: { name: "영릉" }, geometry: { type: 'Polygon', coordinates: [[[110.0, 28.5], [112.0, 28.5], [112.0, 26.0], [110.0, 26.0], [110.0, 28.5]]] } },
-    { type: 'Feature', properties: { name: "계양" }, geometry: { type: 'Polygon', coordinates: [[[112.0, 27.5], [115.0, 27.5], [115.0, 25.0], [112.0, 25.0], [112.0, 27.5]]] } },
-    { type: 'Feature', properties: { name: "적벽" }, geometry: { type: 'Polygon', coordinates: [[[113.0, 30.0], [115.0, 30.0], [115.0, 29.0], [113.0, 29.0], [113.0, 30.0]]] } },
-
-    // --- ⚔️ 익주 / 서남 (경도 98~110 / 위도 24~35) ---
-    { type: 'Feature', properties: { name: "한중" }, geometry: { type: 'Polygon', coordinates: [[[105.0, 35.0], [108.5, 35.0], [108.5, 33.0], [105.0, 33.0], [105.0, 35.0]]] } },
-    { type: 'Feature', properties: { name: "자동" }, geometry: { type: 'Polygon', coordinates: [[[103.0, 33.5], [106.5, 33.5], [106.5, 31.5], [103.0, 31.5], [103.0, 33.5]]] } },
-    { type: 'Feature', properties: { name: "성도" }, geometry: { type: 'Polygon', coordinates: [[[102.5, 31.5], [105.5, 31.5], [105.5, 29.5], [102.5, 29.5], [102.5, 31.5]]] } },
-    { type: 'Feature', properties: { name: "강주" }, geometry: { type: 'Polygon', coordinates: [[[105.5, 31.5], [109.0, 31.5], [109.0, 29.0], [105.5, 29.0], [105.5, 31.5]]] } },
-    { type: 'Feature', properties: { name: "건녕" }, geometry: { type: 'Polygon', coordinates: [[[102.0, 28.5], [106.0, 28.5], [106.0, 25.5], [102.0, 25.5], [102.0, 28.5]]] } },
-    { type: 'Feature', properties: { name: "운남" }, geometry: { type: 'Polygon', coordinates: [[[98.0, 27.0], [102.0, 27.0], [102.0, 24.0], [98.0, 24.0], [98.0, 27.0]]] } },
-
-    // --- ⚔️ 서북 (경도 93~108 / 위도 33~43) ---
-    { type: 'Feature', properties: { name: "천수" }, geometry: { type: 'Polygon', coordinates: [[[104.0, 36.5], [107.5, 36.5], [107.5, 33.5], [104.0, 33.5], [104.0, 36.5]]] } },
-    { type: 'Feature', properties: { name: "안정" }, geometry: { type: 'Polygon', coordinates: [[[105.5, 38.0], [109.0, 38.0], [109.0, 36.5], [105.5, 36.5], [105.5, 38.0]]] } },
-    { type: 'Feature', properties: { name: "무위" }, geometry: { type: 'Polygon', coordinates: [[[100.0, 42.0], [105.5, 42.0], [105.5, 38.0], [100.0, 38.0], [100.0, 42.0]]] } },
-    { type: 'Feature', properties: { name: "서량" }, geometry: { type: 'Polygon', coordinates: [[[93.0, 42.5], [100.0, 42.5], [100.0, 38.0], [93.0, 38.0], [93.0, 42.5]]] } }
+    // --- ⚔️ 서북 영역 (서량-무위-안정-천수) ---
+    { type: 'Feature', properties: { name: "서량" }, geometry: { type: 'Polygon', coordinates: [[[93.0, 42.5], [100.0, 42.5], [100.0, 39.5], [93.0, 39.5], [93.0, 42.5]]] } },
+    { type: 'Feature', properties: { name: "무위" }, geometry: { type: 'Polygon', coordinates: [[[100.0, 42.5], [104.5, 42.5], [104.5, 39.5], [100.0, 39.5], [100.0, 42.5]]] } },
+    { type: 'Feature', properties: { name: "안정" }, geometry: { type: 'Polygon', coordinates: [[[104.5, 41.0], [107.0, 41.0], [107.0, 38.0], [104.5, 38.0], [104.5, 41.0]]] } },
+    { type: 'Feature', properties: { name: "천수" }, geometry: { type: 'Polygon', coordinates: [[[103.5, 38.0], [107.0, 38.0], [107.0, 35.5], [103.5, 35.5], [103.5, 38.0]]] } }
   ]
-};
+}; 
+
 export default function Home() {
   const mapRef = useRef<MapRef>(null);
   const [selectedEvent, setSelectedEvent] = useState<any>(LIUBEI_CHRONICLE.events[0]);
