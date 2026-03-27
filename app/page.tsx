@@ -337,8 +337,7 @@ const handleMapLoad = (e: any) => {
                     <span className="text-xs font-black text-slate-700">{region.properties.name}</span>
                   </div>
                 ))}
-              </div>
-              </div>
+               </div>
             {/* 📊 2. 인물 스탯 대시보드 영역 */}
             <div className="bg-white border border-slate-200 p-6 rounded-[30px] shadow-sm flex-shrink-0 transition-all duration-300">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
