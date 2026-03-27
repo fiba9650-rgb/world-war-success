@@ -120,51 +120,35 @@ const ANCIENT_CITIES: any = {
 const HAN_PROVINCES: any = {
   type: 'FeatureCollection',
   features: [
-    {
-      type: 'Feature', properties: { name: "익 주", color: "#f59e0b" },
-      geometry: { type: 'Polygon', coordinates: [[
-        [106.5, 34.3], [108.5, 34.1], [110.2, 32.5], [111.0, 31.8], [110.0, 29.5], 
-        [108.5, 28.5], [106.0, 28.0], [104.5, 25.0], [102.5, 24.0], [98.5, 25.5], 
-        [97.0, 30.5], [100.0, 33.0], [102.5, 33.5], [104.5, 34.1], [106.5, 34.3]
-      ]] }
-    },
-    {
-      type: 'Feature', properties: { name: "형 주", color: "#10b981" },
-      geometry: { type: 'Polygon', coordinates: [[
-        [110.2, 33.8], [112.5, 33.5], [114.8, 33.2], [115.5, 31.5], [116.2, 29.8], 
-        [114.5, 28.0], [113.8, 25.5], [111.5, 24.5], [109.5, 24.8], [108.5, 27.5], 
-        [108.8, 29.5], [110.0, 32.2], [110.2, 33.8]
-      ]] }
-    },
-    {
-      type: 'Feature', properties: { name: "양 주", color: "#ef4444" },
-      geometry: { type: 'Polygon', coordinates: [[
-        [116.2, 32.5], [118.5, 33.5], [120.5, 33.8], [121.8, 32.5], [122.5, 29.5], 
-        [121.0, 26.5], [118.5, 24.5], [115.5, 25.5], [113.8, 28.5], [115.5, 31.5], [116.2, 32.5]
-      ]] }
-    },
-    {
-      type: 'Feature', properties: { name: "중 원", color: "#3b82f6" },
-      geometry: { type: 'Polygon', coordinates: [[
-        [110.5, 38.5], [113.5, 38.8], [116.5, 38.8], [118.5, 38.5], [121.5, 37.5], 
-        [122.5, 34.5], [119.5, 33.8], [116.5, 33.5], [114.8, 33.2], [111.5, 33.5], 
-        [108.5, 34.5], [108.8, 36.5], [110.5, 38.5]
-      ]] }
-    },
-    {
-      type: 'Feature', properties: { name: "하 북", color: "#a855f7" },
-      geometry: { type: 'Polygon', coordinates: [[
-        [111.5, 43.5], [116.5, 43.8], [120.5, 43.5], [123.5, 41.5], [121.5, 39.5], 
-        [118.5, 38.5], [114.5, 38.5], [111.5, 39.5], [110.5, 41.5], [111.5, 43.5]
-      ]] }
-    },
-    {
-      type: 'Feature', properties: { name: "서 북", color: "#f97316" },
-      geometry: { type: 'Polygon', coordinates: [[
-        [93.0, 42.0], [100.0, 42.5], [108.5, 42.0], [110.5, 38.5], [108.5, 34.5], 
-        [105.5, 34.3], [102.5, 33.5], [97.0, 32.5], [93.0, 35.0], [93.0, 42.0]
-      ]] }
-    }
+    // ⚔️ 하북 / 유주 영역 (탁군, 계, 북평, 양평, 업, 평원, 진양)
+    { type: 'Feature', properties: { name: "탁군", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[115.0, 40.5], [117.0, 40.5], [117.0, 38.5], [115.0, 38.5], [115.0, 40.5]]] } },
+    { type: 'Feature', properties: { name: "업", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[113.5, 37.5], [115.5, 37.5], [115.5, 35.5], [113.5, 35.5], [113.5, 37.5]]] } },
+    { type: 'Feature', properties: { name: "평원", color: "#a855f7" }, geometry: { type: 'Polygon', coordinates: [[[115.5, 38.0], [117.5, 38.0], [117.5, 36.5], [115.5, 36.5], [115.5, 38.0]]] } },
+    
+    // ⚔️ 중원 영역 (낙양, 장안, 허창, 진류, 복양, 소패, 하비, 수춘, 여남, 완)
+    { type: 'Feature', properties: { name: "낙양", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 35.5], [113.5, 35.5], [113.5, 34.0], [111.5, 34.0], [111.5, 35.5]]] } },
+    { type: 'Feature', properties: { name: "장안", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[107.5, 35.5], [109.5, 35.5], [109.5, 33.5], [107.5, 33.5], [107.5, 35.5]]] } },
+    { type: 'Feature', properties: { name: "허창", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[114.0, 35.5], [115.5, 35.5], [115.5, 34.0], [114.0, 34.0], [114.0, 35.5]]] } },
+    { type: 'Feature', properties: { name: "하비", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[117.0, 35.5], [119.0, 35.5], [119.0, 33.5], [117.0, 33.5], [117.0, 35.5]]] } },
+    { type: 'Feature', properties: { name: "수춘", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[116.0, 33.5], [117.5, 33.5], [117.5, 32.0], [116.0, 32.0], [116.0, 33.5]]] } },
+    { type: 'Feature', properties: { name: "완", color: "#3b82f6" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 33.8], [113.5, 33.8], [113.5, 32.2], [111.5, 32.2], [111.5, 33.8]]] } },
+
+    // ⚔️ 강동 영역 (건업, 오, 회계, 시상, 여강)
+    { type: 'Feature', properties: { name: "건업", color: "#ef4444" }, geometry: { type: 'Polygon', coordinates: [[[118.0, 33.0], [120.0, 33.0], [120.0, 31.0], [118.0, 31.0], [118.0, 33.0]]] } },
+    { type: 'Feature', properties: { name: "오", color: "#ef4444" }, geometry: { type: 'Polygon', coordinates: [[[120.0, 32.0], [121.5, 32.0], [121.5, 30.5], [120.0, 30.5], [120.0, 32.0]]] } },
+
+    // ⚔️ 형주 영역 (양양, 강하, 강릉, 무릉, 장사, 영릉, 계양)
+    { type: 'Feature', properties: { name: "양양", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 32.5], [113.0, 32.5], [113.0, 31.0], [111.5, 31.0], [111.5, 32.5]]] } },
+    { type: 'Feature', properties: { name: "강릉", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[111.5, 31.0], [113.0, 31.0], [113.0, 29.5], [111.5, 29.5], [111.5, 31.0]]] } },
+    { type: 'Feature', properties: { name: "장사", color: "#10b981" }, geometry: { type: 'Polygon', coordinates: [[[112.0, 29.0], [114.0, 29.0], [114.0, 27.5], [112.0, 27.5], [112.0, 29.0]]] } },
+
+    // ⚔️ 익주 영역 (한중, 자동, 성도, 강주, 건녕, 운남)
+    { type: 'Feature', properties: { name: "한중", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[106.0, 34.0], [108.0, 34.0], [108.0, 32.5], [106.0, 32.5], [106.0, 34.0]]] } },
+    { type: 'Feature', properties: { name: "성도", color: "#f59e0b" }, geometry: { type: 'Polygon', coordinates: [[[103.0, 31.5], [105.0, 31.5], [105.0, 29.5], [103.0, 29.5], [103.0, 31.5]]] } },
+    
+    // ⚔️ 서북 영역 (천수, 안정, 무위, 서량)
+    { type: 'Feature', properties: { name: "서량", color: "#f97316" }, geometry: { type: 'Polygon', coordinates: [[[97.0, 41.0], [100.0, 41.0], [100.0, 38.5], [97.0, 38.5], [97.0, 41.0]]] } },
+    { type: 'Feature', properties: { name: "천수", color: "#f97316" }, geometry: { type: 'Polygon', coordinates: [[[104.5, 35.5], [106.5, 35.5], [106.5, 34.0], [104.5, 34.0], [104.5, 35.5]]] } }
   ]
 };
 export default function Home() {
@@ -268,42 +252,27 @@ const handleMapLoad = (e: any) => {
               >
                 <NavigationControl position="top-right" />
                 {/* 🗺️ 삼국지 지역 구분 영토 (투명도를 올려서 확 보이게 수정!) */}
-                <Source id="han-provinces" type="geojson" data={HAN_PROVINCES}>
-                  {/* 1. 영토 배경색칠 (눈에 확 띄게 투명도 0.35로 올림) */}
-                  <Layer
-                    id="province-fill"
-                    type="fill"
-                    paint={{
-                      'fill-color': ['get', 'color'],
-                      'fill-opacity': 0.35 
-                    }}
-                  />
-                  {/* 2. 영토 경계선 */}
-                  <Layer
-                    id="province-line"
-                    type="line"
-                    paint={{
-                      'line-color': ['get', 'color'],
-                      'line-width': 3,
-                      'line-opacity': 0.8
-                    }}
-                  />
-                  {/* 3. 영토 한가운데 이름 표시 */}
-                  <Layer
-                    id="province-label"
-                    type="symbol"
-                    layout={{
-                      'text-field': ['get', 'name'],
-                      'text-font': ['Arial Unicode MS Regular'],
-                      'text-size': 24, 
-                      'text-anchor': 'center'
-                    }}
-                    paint={{
-                      'text-color': '#1e293b', 
-                      'text-halo-color': '#ffffff',
-                      'text-halo-width': 2
-                    }}
-                  />
+<Source id="han-provinces" type="geojson" data={HAN_PROVINCES}>
+                  <Layer id="province-fill" type="fill" paint={{ 
+                    'fill-color': ['get', 'color'], 
+                    'fill-opacity': 0.12 
+                  }} />
+                  <Layer id="province-line" type="line" paint={{ 
+                    'line-color': ['get', 'color'], 
+                    'line-width': 2.5,
+                    'line-opacity': 1, 
+                    'line-dasharray': [1, 1] 
+                  }} />
+                  <Layer id="province-label" type="symbol" layout={{ 
+                    'text-field': ['get', 'name'], 
+                    'text-font': ['Arial Unicode MS Regular'], 
+                    'text-size': 18, 
+                    'text-anchor': 'center' 
+                  }} paint={{ 
+                    'text-color': ['get', 'color'], 
+                    'text-halo-color': '#ffffff', 
+                    'text-halo-width': 1.5 
+                  }} />
                 </Source>
                 {/* 🏷️ 옛 지명 띄우기 (이름 충돌 방지를 위해 id 변경) */}
                 <Source id="ancient-cities" type="geojson" data={ANCIENT_CITIES}>
