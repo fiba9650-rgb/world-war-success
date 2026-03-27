@@ -276,25 +276,36 @@ const handleMapLoad = (e: any) => {
               
                 {/* 🗺️ 삼국지 지역 구분 영토 (투명도를 올려서 확 보이게 수정!) */}
 <Source id="han-provinces" type="geojson" data={HAN_PROVINCES}>
+                  {/* 1. 영토 내부 (한지 위에 물감 칠한 듯 은은하게) */}
                   <Layer id="province-fill" type="fill" paint={{ 
                     'fill-color': ['get', 'color'], 
-                    'fill-opacity': 0.12 
+                    'fill-opacity': 0.18 // 💡 투명도를 살짝 올려 색감을 명확하게 함
                   }} />
-                  <Layer id="province-line" type="line" paint={{ 
-                    'line-color': ['get', 'color'], 
-                    'line-width': 4.5,
-                    'line-opacity': 0.9, 
-                    'line-join': 'round' 
-                  }} />
+{/* 2. 외곽 경계선 (지형 따라 흐르는 정밀 실선) */}
+                  <Layer 
+                    id="province-line" 
+                    type="line" 
+                    layout={{
+                      'line-join': 'round', // ✅ 모서리를 둥글게 (여기에 넣어야 함!)
+                      'line-cap': 'round'   // ✅ 선의 끝부분도 둥글게
+                    }}
+                    paint={{ 
+                      'line-color': ['get', 'color'], 
+                      'line-width': 4.5,
+                      'line-opacity': 0.95, 
+                      'line-blur': 0.5 
+                    }} 
+                  />
+                  {/* 3. 영토 한가운데 도시명 (가독성 극대화) */}
                   <Layer id="province-label" type="symbol" layout={{ 
                     'text-field': ['get', 'name'], 
-                    'text-font': ['Arial Unicode MS Regular'], 
+                    'text-font': ['Arial Unicode MS Bold'], // 💡 볼드체로 변경
                     'text-size': 18, 
                     'text-anchor': 'center' 
                   }} paint={{ 
-                    'text-color': ['get', 'color'], 
-                    'text-halo-color': '#ffffff', 
-                    'text-halo-width': 1.5 
+                    'text-color': '#1e293b', // 💡 글자색을 짙은 남색으로 고정해서 어떤 배경에서도 잘 보이게 함
+                    'text-halo-color': '#ffffff', // 💡 글자 테두리(헤일로)를 흰색으로
+                    'text-halo-width': 2.5 // 💡 테두리를 두껍게 해서 글자 가독성 확보
                   }} />
                 </Source>
                 {/* 🏷️ 옛 지명 띄우기 (이름 충돌 방지를 위해 id 변경) */}
